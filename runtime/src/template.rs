@@ -8,15 +8,16 @@
 /// For more guidance on Substrate modules, see the example module
 /// https://github.com/paritytech/substrate/blob/master/srml/example/src/lib.rs
 
-use support::{decl_module, decl_storage, decl_event, StorageValue, dispatch::Result};
+use support::{decl_module, decl_storage, decl_event, dispatch::Result};
 use system::ensure_signed;
+use core::convert::TryInto;
 
 /// The module's configuration trait.
 pub trait Trait: system::Trait {
 	// TODO: Add other types and constants required configure this module.
 
 	/// The overarching event type.
-	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
+	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event> + TryInto<Event<Self>>;
 }
 
 // This module's storage items.
@@ -40,17 +41,22 @@ decl_module! {
 		// Just a dummy entry point.
 		// function that can be called by the external world as an extrinsics call
 		// takes a parameter of the type `AccountId`, stores it and emits an event
-		pub fn do_something(origin, something: u32) -> Result {
-			// TODO: You only need this if you want to check it was signed.
+		pub fn ping(origin, something: u32) -> Result {
 			let who = ensure_signed(origin)?;
 
-			// TODO: Code to execute when something calls this.
-			// For example: the following line stores the passed in u32 in the storage
-			Something::put(something);
-
 			// here we are raising the Something event
-			Self::deposit_event(RawEvent::SomethingStored(something, who));
+			Self::deposit_event(RawEvent::Ping(something, who));
 			Ok(())
+		}
+
+		// Runs after every block.
+		fn offchain_worker(_now: T::BlockNumber) {
+			// On
+			for e in <system::Module<T>>::events() {
+				if let Ok(Event::Ping(something, who)) = e.event.try_into() {
+					runtime_io::print("Received ping, sending pong");
+				}
+			}
 		}
 	}
 }
@@ -60,7 +66,7 @@ decl_event!(
 		// Just a dummy event.
 		// Event `Something` is declared with a parameter of the type `u32` and `AccountId`
 		// To emit this event, we call the deposit funtion, from our runtime funtions
-		SomethingStored(u32, AccountId),
+		Ping(u32, AccountId),
 	}
 );
 
@@ -113,6 +119,7 @@ mod tests {
 		type Event = ();
 	}
 	type TemplateModule = Module<Test>;
+	type SystemModule = system::Module<Test>;
 
 	// This function basically just builds a genesis storage key/value store according to
 	// our desired mockup.
@@ -125,9 +132,10 @@ mod tests {
 		with_externalities(&mut new_test_ext(), || {
 			// Just a dummy test for the dummy funtion `do_something`
 			// calling the `do_something` function with a value 42
-			assert_ok!(TemplateModule::do_something(Origin::signed(1), 42));
-			// asserting that the stored value is equal to what we stored
-			assert_eq!(TemplateModule::something(), Some(42));
+			assert_ok!(TemplateModule::ping(Origin::signed(1), 42));
+
+			// check the entry was signalled
+			assert_eq!(SystemModule::events()[0].event, RawEvent::Ping(1, 42));
 		});
 	}
 }
