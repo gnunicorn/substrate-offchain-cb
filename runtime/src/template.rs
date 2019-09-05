@@ -78,13 +78,20 @@ mod tests {
 
 	use runtime_io::with_externalities;
 	use primitives::{H256, Blake2Hasher};
-	use support::{impl_outer_origin, assert_ok, parameter_types};
+	use support::{impl_outer_origin, assert_ok, parameter_types, impl_outer_event};
 	use sr_primitives::{traits::{BlakeTwo256, IdentityLookup}, testing::Header};
 	use sr_primitives::weights::Weight;
 	use sr_primitives::Perbill;
 
 	impl_outer_origin! {
 		pub enum Origin for Test {}
+	}
+
+    use crate::template as module;
+    impl_outer_event! {
+		pub enum TestEvent for Test {
+			module<T>,
+		}
 	}
 
 	// For testing the module, we construct most of a mock runtime. This means
@@ -109,7 +116,7 @@ mod tests {
 		type Lookup = IdentityLookup<Self::AccountId>;
 		type Header = Header;
 		type WeightMultiplierUpdate = ();
-		type Event = ();
+		type Event = TestEvent;
 		type BlockHashCount = BlockHashCount;
 		type MaximumBlockWeight = MaximumBlockWeight;
 		type MaximumBlockLength = MaximumBlockLength;
@@ -117,7 +124,7 @@ mod tests {
 		type Version = ();
 	}
 	impl Trait for Test {
-		type Event = ();
+		type Event = TestEvent;
 	}
 	type TemplateModule = Module<Test>;
 	type SystemModule = system::Module<Test>;
@@ -136,7 +143,7 @@ mod tests {
 			assert_ok!(TemplateModule::ping(Origin::signed(1), 42));
 
 			// check the entry was signalled
-			assert_eq!(SystemModule::events()[0].event, RawEvent::Ping(1, 42));
+			assert_eq!(SystemModule::events()[0].event, RawEvent::Ping(42, 1).into());
 		});
 	}
 }
