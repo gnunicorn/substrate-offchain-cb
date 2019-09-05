@@ -17,7 +17,7 @@ pub trait Trait: system::Trait {
 	// TODO: Add other types and constants required configure this module.
 
 	/// The overarching event type.
-	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event> + TryInto<Event<Self>>;
+	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event> + From<<Self as system::Trait>::Event> + TryInto<Event<Self>>;
 }
 
 // This module's storage items.
@@ -53,7 +53,8 @@ decl_module! {
 		fn offchain_worker(_now: T::BlockNumber) {
 			// On
 			for e in <system::Module<T>>::events() {
-				if let Ok(Event::Ping(something, who)) = e.event.try_into() {
+                let evt: <T as Trait>::Event = e.event.into();
+				if let Ok(Event::<T>::Ping(something, who)) = evt.try_into() {
 					runtime_io::print("Received ping, sending pong");
 				}
 			}
