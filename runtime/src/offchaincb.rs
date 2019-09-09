@@ -8,26 +8,18 @@
 /// For more guidance on Substrate modules, see the example module
 /// https://github.com/paritytech/substrate/blob/master/srml/example/src/lib.rs
 
-use support::{decl_module, decl_storage, decl_event, dispatch::Result};
+use support::{decl_module, decl_event, dispatch::Result};
 use system::ensure_signed;
 use core::convert::TryInto;
 
 /// The module's configuration trait.
 pub trait Trait: system::Trait {
-	// TODO: Add other types and constants required configure this module.
+	
+	/// A dispatchable call type.
+	type Call: From<Call<Self>>;
 
-	/// The overarching event type.
+	/// The overarching event type.f
 	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event> + From<<Self as system::Trait>::Event> + TryInto<Event<Self>>;
-}
-
-// This module's storage items.
-decl_storage! {
-	trait Store for Module<T: Trait> as TemplateModule {
-		// Just a dummy storage item.
-		// Here we are declaring a StorageValue, `Something` as a Option<u32>
-		// `get(something)` is the default getter which returns either the stored `u32` or `None` if nothing stored
-		Something get(something): Option<u32>;
-	}
 }
 
 // The module's dispatchable functions.
@@ -49,14 +41,34 @@ decl_module! {
 			Ok(())
 		}
 
-		// Runs after every block.
+		fn pong(origin, something: u32, who: T::AccountId) -> Result {
+			let _author = ensure_signed(origin)?;
+
+			// here we are raising the Something event
+			Self::deposit_event(RawEvent::Ack(something, who));
+			Ok(())
+		}
+
+		// Runs after every block.q
 		fn offchain_worker(_now: T::BlockNumber) {
-			// On
-			for e in <system::Module<T>>::events() {
-                let evt: <T as Trait>::Event = e.event.into();
-				if let Ok(Event::<T>::Ping(something, who)) = evt.try_into() {
-					runtime_io::print("Received ping, sending pong");
-				}
+			if runtime_io::is_validator() {
+				Self::offchain();
+			}
+		}
+	}
+}
+
+
+impl<T: Trait> Module<T> {
+	fn offchain() {
+		runtime_io::print("Offchain triggered");
+		// On
+		for e in <system::Module<T>>::events() {
+			let evt: <T as Trait>::Event = e.event.into();
+			if let Ok(Event::<T>::Ping(something, who)) = evt.try_into() {
+				runtime_io::print("Received ping, sending pong");
+				let call = Call::pong(something, who);
+				runtime_io::submit_transaction(&call);
 			}
 		}
 	}
@@ -68,6 +80,8 @@ decl_event!(
 		// Event `Something` is declared with a parameter of the type `u32` and `AccountId`
 		// To emit this event, we call the deposit funtion, from our runtime funtions
 		Ping(u32, AccountId),
+		// When we received a Pong, we also Ack it.
+		Ack(u32, AccountId),
 	}
 );
 
