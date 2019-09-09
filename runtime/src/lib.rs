@@ -254,6 +254,7 @@ impl sudo::Trait for Runtime {
 
 /// Used for the module template in `./template.rs`
 impl offchaincb::Trait for Runtime {
+	type Call = Call;
 	type Event = Event;
 }
 
