@@ -10,6 +10,8 @@
 
 use support::{decl_module, decl_event, dispatch::Result};
 use system::ensure_signed;
+use system::offchain::SubmitSignedTransaction;
+
 use core::convert::TryInto;
 
 /// The module's configuration trait.
@@ -19,6 +21,20 @@ pub trait Trait: system::Trait {
 
 	/// The overarching event type.f
 	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event> + From<<Self as system::Trait>::Event> + TryInto<Event<Self>>;
+	///
+	type SubmitTransaction = SubmitSignedTransaction<Self, <Self as Trait>::Call>;
+}
+
+decl_storage! {
+	trait Store for Module<T: Trait> as Offchaincb {
+
+		/// The current set of keys that may issue a heartbeat.
+		Keys get(keys): Vec<T::AccountId>;
+	}
+	add_extra_genesis {
+		config(keys): Vec<T::AccountId>;
+		build(|config| Module::<T>::initialize_keys(&config.keys))
+	}
 }
 
 // The module's dispatchable functions.
@@ -40,11 +56,13 @@ decl_module! {
 			Ok(())
 		}
 
-		pub fn pong(origin, something: u32, who: T::AccountId) -> Result {
-			let _author = ensure_signed(origin)?;
+		pub fn pong(origin, index: u32, something: u32, who: T::AccountId) -> Result {
+			let author = ensure_signed(origin)?;
+			if Some(author) = Keys::<T>::get().get(index) {
+				// here we are raising the Something event
+				Self::deposit_event(RawEvent::Ack(something, author));
+			}
 
-			// here we are raising the Something event
-			Self::deposit_event(RawEvent::Ack(something, who));
 			Ok(())
 		}
 
@@ -61,24 +79,71 @@ decl_module! {
 impl<T: Trait> Module<T> {
 	fn offchain() {
 		runtime_io::print("Offchain triggered");
+
+		let (index, key) = match {
+			let authorities = Keys::<T>::get();
+			let mut local_keys = T::AuthorityId::all();
+			local_keys.sort();
+
+			authorities.into_iter()
+				.enumerate()
+				.filter_map(|(index, authority)| {
+					local_keys.binary_search(&authority)
+						.ok()
+						.map(|location| (index as u32, &local_keys[location]))
+				}).next()
+			} {
+			Some((index, key)) => (index, key),
+			_ => {
+				runtime_io::print("No acceptable key found, not running offchain worker");
+				return;
+			}
+		};
+
 		// On
 		for e in <system::Module<T>>::events() {
 			let evt: <T as Trait>::Event = e.event.into();
 			if let Ok(Event::<T>::Ping(something, who)) = evt.try_into() {
 				runtime_io::print("Received ping, sending pong");
-				let call = <T as Trait>::Call::from(Call::pong(something, who));
-                let extrinsic = prepare_transaction::<T>(call);
-				runtime_io::submit_transaction(&extrinsic);
+				let call = <T as Trait>::Call::from(Call::pong(index, something, who));
+				Self::SubmitTransaction::sign_and_submit(call, key);
 			}
+		}
+	}
+
+	fn initialize_keys(keys: &[T::AccountId]) {
+		if !keys.is_empty() {
+			assert!(Keys::<T>::get().is_empty(), "Keys are already initialized!");
+			Keys::<T>::put_ref(keys);
 		}
 	}
 }
 
-// This should convert a runtime-wide `Call` into runtime-wide `Extrinsic` type.
-// And that's exactly what `srml_system::offchain::SubmitTransaction` extension is
-// attempting to simplify.
-fn prepare_transaction<T: Trait>(call: <T as Trait>::Call) -> impl codec::Encode {
-    unimplemented!()
+impl<T: Trait> session::OneSessionHandler<T::AccountId> for Module<T> {
+
+	type Key = T::AccountId;
+
+	fn on_genesis_session<'a, I: 'a>(validators: I)
+		where I: Iterator<Item=(&'a T::AccountId, T::AuthorityId)>
+	{
+		let keys = validators.map(|x| x.1).collect::<Vec<_>>();
+		Self::initialize_keys(&keys);
+	}
+
+	fn on_new_session<'a, I: 'a>(_changed: bool, validators: I, _queued_validators: I)
+		where I: Iterator<Item=(&'a T::AccountId, T::AuthorityId)>
+	{
+		// Remember who the authorities are for the new session.
+		Keys::<T>::put(validators.map(|x| x.1).collect::<Vec<_>>());
+	}
+
+	fn on_before_session_ending() {
+		Keys::<T>::kill();
+	}
+
+	fn on_disabled(_i: usize) {
+		Keys::<T>::kill();
+	}
 }
 
 decl_event!(

@@ -252,10 +252,14 @@ impl sudo::Trait for Runtime {
 	type Proposal = Call;
 }
 
+
+type SubmitTransaction = TransactionSubmitter<AccountId, Runtime, CheckedExtrinsic>;
+
 /// Used for the module template in `./template.rs`
 impl offchaincb::Trait for Runtime {
 	type Call = Call;
 	type Event = Event;
+	type SubmitTransaction = SubmitTransaction;
 }
 
 construct_runtime!(
@@ -272,7 +276,7 @@ construct_runtime!(
 		Balances: balances,
 		Sudo: sudo,
 		// Used for the module template in `./template.rs`
-		OffchainCB: offchaincb::{Module, Call, Event<T>},
+		OffchainCB: offchaincb::{Module, Call, Event<T>, Storage},
 	}
 );
 
