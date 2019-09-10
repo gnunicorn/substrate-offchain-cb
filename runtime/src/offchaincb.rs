@@ -14,7 +14,6 @@ use core::convert::TryInto;
 
 /// The module's configuration trait.
 pub trait Trait: system::Trait {
-	
 	/// A dispatchable call type.
 	type Call: From<Call<Self>>;
 
@@ -41,7 +40,7 @@ decl_module! {
 			Ok(())
 		}
 
-		fn pong(origin, something: u32, who: T::AccountId) -> Result {
+		pub fn pong(origin, something: u32, who: T::AccountId) -> Result {
 			let _author = ensure_signed(origin)?;
 
 			// here we are raising the Something event
@@ -67,11 +66,19 @@ impl<T: Trait> Module<T> {
 			let evt: <T as Trait>::Event = e.event.into();
 			if let Ok(Event::<T>::Ping(something, who)) = evt.try_into() {
 				runtime_io::print("Received ping, sending pong");
-				let call = Call::pong(something, who);
-				runtime_io::submit_transaction(&call);
+				let call = <T as Trait>::Call::from(Call::pong(something, who));
+                let extrinsic = prepare_transaction::<T>(call);
+				runtime_io::submit_transaction(&extrinsic);
 			}
 		}
 	}
+}
+
+// This should convert a runtime-wide `Call` into runtime-wide `Extrinsic` type.
+// And that's exactly what `srml_system::offchain::SubmitTransaction` extension is
+// attempting to simplify.
+fn prepare_transaction<T: Trait>(call: <T as Trait>::Call) -> impl codec::Encode {
+    unimplemented!()
 }
 
 decl_event!(
