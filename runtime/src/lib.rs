@@ -254,9 +254,10 @@ impl sudo::Trait for Runtime {
 }
 
 
-mod offchaincb_crypto {
+pub mod offchaincb_crypto {
+	pub use crate::offchaincb::KEY_TYPE;
 	use primitives::sr25519;
-	app_crypto::app_crypto!(sr25519, crate::offchaincb::KEY_TYPE);
+	app_crypto::app_crypto!(sr25519, KEY_TYPE);
 
 	impl From<Signature> for super::Signature {
 		fn from(a: Signature) -> Self {

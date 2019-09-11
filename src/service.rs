@@ -108,6 +108,17 @@ pub fn new_full<C: Send + Default + 'static>(config: Configuration<C, GenesisCon
 		}
 	}
 
+	// TODO Add a proper key for offchaincb
+	service
+		.keystore()
+		.write()
+		.insert_ephemeral_from_seed_by_type::<offchain_cb_runtime::offchaincb_crypto::Pair>(
+			"my awesome account",
+			offchain_cb_runtime::offchaincb_crypto::KEY_TYPE,
+		)
+		.unwrap()
+		;
+
 	if is_authority {
 		let proposer = basic_authorship::ProposerFactory {
 			client: service.client(),
