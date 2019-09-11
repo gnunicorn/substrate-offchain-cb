@@ -14,7 +14,7 @@ use sr_primitives::{
 	ApplyResult, transaction_validity::TransactionValidity, generic, create_runtime_str,
 	impl_opaque_keys, AnySignature
 };
-use sr_primitives::traits::{NumberFor, BlakeTwo256, Block as BlockT, DigestFor, StaticLookup, Verify, ConvertInto};
+use sr_primitives::traits::{NumberFor, BlakeTwo256, Block as BlockT, DigestFor, StaticLookup, Verify, ConvertInto, SaturatedConversion};
 use sr_primitives::weights::Weight;
 use babe::{AuthorityId as BabeId};
 use grandpa::{AuthorityId as GrandpaId, AuthorityWeight as GrandpaWeight};
@@ -254,13 +254,26 @@ impl sudo::Trait for Runtime {
 }
 
 
-type SubmitTransaction = TransactionSubmitter<AccountId, Runtime, CheckedExtrinsic>;
+mod offchaincb_crypto {
+    use primitives::sr25519;
+    app_crypto::app_crypto!(sr25519, crate::offchaincb::KEY_TYPE);
+
+    impl From<Signature> for super::Signature {
+        fn from(a: Signature) -> Self {
+            sr25519::Signature::from(a).into()
+        }
+    }
+}
+
+type OffchainCbAccount = offchaincb_crypto::Public;
+type SubmitTransaction = TransactionSubmitter<OffchainCbAccount, Runtime, UncheckedExtrinsic>;
 
 /// Used for the module template in `./template.rs`
 impl offchaincb::Trait for Runtime {
 	type Call = Call;
 	type Event = Event;
 	type SubmitTransaction = SubmitTransaction;
+    type KeyType = OffchainCbAccount;
 }
 
 impl system::offchain::CreateTransaction<Runtime, UncheckedExtrinsic> for Runtime {
@@ -281,7 +294,6 @@ impl system::offchain::CreateTransaction<Runtime, UncheckedExtrinsic> for Runtim
 			system::CheckNonce::<Runtime>::from(index),
 			system::CheckWeight::<Runtime>::new(),
 			balances::TakeFees::<Runtime>::from(tip),
-			Default::default(),
 		);
 		let raw_payload = SignedPayload::new(call, extra).ok()?;
 		let signature = F::sign(account.clone(), &raw_payload)?;

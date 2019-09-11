@@ -9,32 +9,29 @@
 /// https://github.com/paritytech/substrate/blob/master/srml/example/src/lib.rs
 
 use rstd::prelude::*;
+use app_crypto::RuntimeAppPublic;
 use support::{decl_module, decl_event, decl_storage, dispatch::Result};
 use system::ensure_signed;
-use system::offchain::SubmitUnsignedTransaction;
-// use session;
+use system::offchain::SubmitSignedTransaction;
 
 use core::convert::TryInto;
+
+pub const KEY_TYPE: app_crypto::KeyTypeId = app_crypto::KeyTypeId(*b"ofcb");
 
 /// The module's configuration trait.
 pub trait Trait: system::Trait  {
 	/// A dispatchable call type.
 	type Call: From<Call<Self>>;
-
 	/// The overarching event type
 	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event> + From<<Self as system::Trait>::Event> + TryInto<Event<Self>>;
 	/// The way through which we submit signed transactions
-	type SubmitTransaction: SubmitUnsignedTransaction<Self, <Self as Trait>::Call>;
+	type SubmitTransaction: SubmitSignedTransaction<Self, <Self as Trait>::Call>;
+    /// A key type for offchaincb.
+    type KeyType: RuntimeAppPublic + From<Self::AccountId> + Into<Self::AccountId>;
 }
 
 decl_storage! {
 	trait Store for Module<T: Trait> as OffchainCb {
-		/// The current set of keys that may submit pongs
-		Keys get(keys): Vec<T::AccountId>;
-	}
-	add_extra_genesis {
-		config(keys): Vec<T::AccountId>;
-		build(|config| Module::<T>::initialize_keys(&config.keys))
 	}
 }
 
@@ -57,21 +54,18 @@ decl_module! {
 			Ok(())
 		}
 
-		pub fn pong(origin, index: u32, something: u32, who: T::AccountId) -> Result {
+		pub fn pong(origin, something: u32, who: T::AccountId) -> Result {
 			let author = ensure_signed(origin)?;
-			if Some(author) = Keys::<T>::get().get(index) {
-				// here we are raising the Something event
-				Self::deposit_event(RawEvent::Ack(something, author));
-			}
+
+            // here we are raising the Something event
+            Self::deposit_event(RawEvent::Ack(something, author));
 
 			Ok(())
 		}
 
 		// Runs after every block.q
 		fn offchain_worker(_now: T::BlockNumber) {
-			if runtime_io::is_validator() {
-				Self::offchain();
-			}
+            Self::offchain();
 		}
 	}
 }
@@ -81,69 +75,17 @@ impl<T: Trait> Module<T> {
 	fn offchain() {
 		runtime_io::print("Offchain triggered");
 
-		let (index, key) = match {
-			let authorities = Keys::<T>::get();
-			let mut local_keys = T::AccountId::all();
-			local_keys.sort();
-
-			authorities.into_iter()
-				.enumerate()
-				.filter_map(|(index, authority)| {
-					local_keys.binary_search(&authority)
-						.ok()
-						.map(|location| (index as u32, &local_keys[location]))
-				}).next()
-			} {
-			Some((index, key)) => (index, key),
-			_ => {
-				runtime_io::print("No acceptable key found, not running offchain worker");
-				return;
-			}
-		};
-
-		// On
-		for e in <system::Module<T>>::events() {
-			let evt: <T as Trait>::Event = e.event.into();
-			if let Ok(Event::<T>::Ping(something, who)) = evt.try_into() {
-				runtime_io::print("Received ping, sending pong");
-				let call = <T as Trait>::Call::from(Call::pong(index, something, who));
-				Self::SubmitTransaction::sign_and_submit(call, key);
-			}
-		}
-	}
-
-	fn initialize_keys(keys: &[T::AccountId]) {
-		if !keys.is_empty() {
-			assert!(Keys::<T>::get().is_empty(), "Keys are already initialized!");
-			Keys::<T>::put_ref(keys);
-		}
-	}
-}
-
-impl<T: Trait> session::OneSessionHandler<T::AccountId> for Module<T> {
-
-	type Key = T::AccountId;
-
-	fn on_genesis_session<'a, I: 'a>(validators: I)
-		where I: Iterator<Item=(&'a T::AccountId, T::AccountId)>
-	{
-		let keys = validators.map(|x| x.1).collect::<Vec<_>>();
-		Self::initialize_keys(&keys);
-	}
-
-	fn on_new_session<'a, I: 'a>(_changed: bool, validators: I, _queued_validators: I)
-		where I: Iterator<Item=(&'a T::AccountId, T::AccountId)>
-	{
-		// Remember who the authorities are for the new session.
-		Keys::<T>::put(validators.map(|x| x.1).collect::<Vec<_>>());
-	}
-
-	fn on_before_session_ending() {
-		Keys::<T>::kill();
-	}
-
-	fn on_disabled(_i: usize) {
-		Keys::<T>::kill();
+        for key in T::KeyType::all() {
+            let key = key.into();
+            for e in <system::Module<T>>::events() {
+                let evt: <T as Trait>::Event = e.event.into();
+                if let Ok(Event::<T>::Ping(something, who)) = evt.try_into() {
+                    runtime_io::print("Received ping, sending pong");
+                    let call = Call::pong(something, who);
+                    T::SubmitTransaction::sign_and_submit(call, key.clone());
+                }
+            }
+        }
 	}
 }
 

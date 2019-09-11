@@ -5,6 +5,7 @@ authors = ["Benjamin Kampmann"]
 edition = "2018"
 
 [dependencies]
+app-crypto = { package = "substrate-application-crypto", path = "../../substrate/core/application-crypto", default-features = false }
 serde = { version = "1.0", optional = true, features = ["derive"] }
 safe-mix = { version = "1.0", default-features = false }
 codec = { package = "parity-scale-codec", version = "1.0.0", default-features = false, features = ["derive"] }
@@ -21,7 +22,6 @@ executive = { package = "srml-executive", path = "../../substrate/srml/executive
 indices = { package = "srml-indices", path = "../../substrate/srml/indices", default_features = false }
 grandpa = { package = "srml-grandpa", path = "../../substrate/srml/grandpa", default-features = false }
 system = { package = "srml-system", path = "../../substrate/srml/system", default_features = false }
-session = { package = "srml-session", path = "../../substrate/srml/session", default_features = false }
 timestamp = { package = "srml-timestamp", path = "../../substrate/srml/timestamp", default_features = false }
 sudo = { package = "srml-sudo", path = "../../substrate/srml/sudo", default_features = false }
 sr-primitives = { path = "../../substrate/core/sr-primitives", default_features = false }
@@ -34,11 +34,11 @@ wasm-builder-runner = { path = "../../substrate/core/utils/wasm-builder-runner",
 [features]
 default = ["std"]
 std = [
+  "app-crypto/std",
 	"codec/std",
 	"client/std",
 	"rstd/std",
 	"runtime-io/std",
-	"session/std",
 	"support/std",
 	"balances/std",
 	"babe/std",
@@ -55,6 +55,6 @@ std = [
 	"serde",
 	"safe-mix/std",
 	"offchain-primitives/std",
-	"substrate-session/std",
+  "substrate-session/std",
 ]
 no_std = []
