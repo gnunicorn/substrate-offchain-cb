@@ -113,7 +113,7 @@ pub fn new_full<C: Send + Default + 'static>(config: Configuration<C, GenesisCon
 		.keystore()
 		.write()
 		.insert_ephemeral_from_seed_by_type::<offchain_cb_runtime::offchaincb_crypto::Pair>(
-			"my awesome account",
+			"bottom drive obey lake curtain smoke basket hold race lonely fit walk/Alice",
 			offchain_cb_runtime::offchaincb_crypto::KEY_TYPE,
 		)
 		.unwrap()

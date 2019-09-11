@@ -18,7 +18,7 @@ fn main() {
 		executable_name: "offchain-cb",
 		author: "Benjamin Kampmann",
 		description: "OffChain Callback",
-		support_url: "support.Benjamin Kampmann.an",
+		support_url: "https://github.com/gnunicorn/substrate-offchain-cb",
 	};
 
 	if let Err(e) = cli::run(::std::env::args(), cli::Exit, version) {
