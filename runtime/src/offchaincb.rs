@@ -57,15 +57,15 @@ decl_module! {
 		pub fn pong(origin, something: u32, who: T::AccountId) -> Result {
 			let author = ensure_signed(origin)?;
 
-            // here we are raising the Something event
-            Self::deposit_event(RawEvent::Ack(something, author));
+			// here we are raising the Something event
+			Self::deposit_event(RawEvent::Ack(something, author));
 
 			Ok(())
 		}
 
 		// Runs after every block.q
 		fn offchain_worker(_now: T::BlockNumber) {
-            Self::offchain();
+			Self::offchain();
 		}
 	}
 }
@@ -75,17 +75,17 @@ impl<T: Trait> Module<T> {
 	fn offchain() {
 		runtime_io::print("Offchain triggered");
 
-        for key in T::KeyType::all() {
-            let key = key.into();
-            for e in <system::Module<T>>::events() {
-                let evt: <T as Trait>::Event = e.event.into();
-                if let Ok(Event::<T>::Ping(something, who)) = evt.try_into() {
-                    runtime_io::print("Received ping, sending pong");
-                    let call = Call::pong(something, who);
-                    T::SubmitTransaction::sign_and_submit(call, key.clone());
-                }
-            }
-        }
+		for key in T::KeyType::all() {
+			let key = key.into();
+			for e in <system::Module<T>>::events() {
+				let evt: <T as Trait>::Event = e.event.into();
+				if let Ok(Event::<T>::Ping(something, who)) = evt.try_into() {
+					runtime_io::print("Received ping, sending pong");
+					let call = Call::pong(something, who);
+					T::SubmitTransaction::sign_and_submit(call, key.clone());
+				}
+			}
+		}
 	}
 }
 

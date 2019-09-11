@@ -255,14 +255,14 @@ impl sudo::Trait for Runtime {
 
 
 mod offchaincb_crypto {
-    use primitives::sr25519;
-    app_crypto::app_crypto!(sr25519, crate::offchaincb::KEY_TYPE);
+	use primitives::sr25519;
+	app_crypto::app_crypto!(sr25519, crate::offchaincb::KEY_TYPE);
 
-    impl From<Signature> for super::Signature {
-        fn from(a: Signature) -> Self {
-            sr25519::Signature::from(a).into()
-        }
-    }
+	impl From<Signature> for super::Signature {
+		fn from(a: Signature) -> Self {
+			sr25519::Signature::from(a).into()
+		}
+	}
 }
 
 type OffchainCbAccount = offchaincb_crypto::Public;
@@ -273,7 +273,7 @@ impl offchaincb::Trait for Runtime {
 	type Call = Call;
 	type Event = Event;
 	type SubmitTransaction = SubmitTransaction;
-    type KeyType = OffchainCbAccount;
+	type KeyType = OffchainCbAccount;
 }
 
 impl system::offchain::CreateTransaction<Runtime, UncheckedExtrinsic> for Runtime {

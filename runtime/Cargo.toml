@@ -34,7 +34,7 @@ wasm-builder-runner = { path = "../../substrate/core/utils/wasm-builder-runner",
 [features]
 default = ["std"]
 std = [
-  "app-crypto/std",
+	"app-crypto/std",
 	"codec/std",
 	"client/std",
 	"rstd/std",
@@ -55,6 +55,6 @@ std = [
 	"serde",
 	"safe-mix/std",
 	"offchain-primitives/std",
-  "substrate-session/std",
-]
+	"substrate-session/std",
+	]
 no_std = []
