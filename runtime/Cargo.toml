@@ -21,6 +21,7 @@ executive = { package = "srml-executive", path = "../../substrate/srml/executive
 indices = { package = "srml-indices", path = "../../substrate/srml/indices", default_features = false }
 grandpa = { package = "srml-grandpa", path = "../../substrate/srml/grandpa", default-features = false }
 system = { package = "srml-system", path = "../../substrate/srml/system", default_features = false }
+session = { package = "srml-session", path = "../../substrate/srml/session", default_features = false }
 timestamp = { package = "srml-timestamp", path = "../../substrate/srml/timestamp", default_features = false }
 sudo = { package = "srml-sudo", path = "../../substrate/srml/sudo", default_features = false }
 sr-primitives = { path = "../../substrate/core/sr-primitives", default_features = false }
@@ -37,6 +38,7 @@ std = [
 	"client/std",
 	"rstd/std",
 	"runtime-io/std",
+	"session/std",
 	"support/std",
 	"balances/std",
 	"babe/std",

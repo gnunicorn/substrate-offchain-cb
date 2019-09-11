@@ -8,9 +8,11 @@
 /// For more guidance on Substrate modules, see the example module
 /// https://github.com/paritytech/substrate/blob/master/srml/example/src/lib.rs
 
-use support::{decl_module, decl_event, dispatch::Result};
+use rstd::prelude::*;
+use support::{decl_module, decl_event, decl_storage, dispatch::Result};
 use system::ensure_signed;
-use system::offchain::SubmitSignedTransaction;
+use system::offchain::SubmitUnsignedTransaction;
+use session;
 
 use core::convert::TryInto;
 
@@ -19,16 +21,15 @@ pub trait Trait: system::Trait {
 	/// A dispatchable call type.
 	type Call: From<Call<Self>>;
 
-	/// The overarching event type.f
+	/// The overarching event type
 	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event> + From<<Self as system::Trait>::Event> + TryInto<Event<Self>>;
-	///
-	type SubmitTransaction = SubmitSignedTransaction<Self, <Self as Trait>::Call>;
+	/// The way through which we submit signed transactions
+	type SubmitTransaction = SubmitUnsignedTransaction<Self, <Self as Trait>::Call>;
 }
 
 decl_storage! {
-	trait Store for Module<T: Trait> as Offchaincb {
-
-		/// The current set of keys that may issue a heartbeat.
+	trait Store for Module<T: Trait> as OffchainCb {
+		/// The current set of keys that may submit pongs
 		Keys get(keys): Vec<T::AccountId>;
 	}
 	add_extra_genesis {
@@ -82,7 +83,7 @@ impl<T: Trait> Module<T> {
 
 		let (index, key) = match {
 			let authorities = Keys::<T>::get();
-			let mut local_keys = T::AuthorityId::all();
+			let mut local_keys = T::AccountId::all();
 			local_keys.sort();
 
 			authorities.into_iter()
@@ -124,14 +125,14 @@ impl<T: Trait> session::OneSessionHandler<T::AccountId> for Module<T> {
 	type Key = T::AccountId;
 
 	fn on_genesis_session<'a, I: 'a>(validators: I)
-		where I: Iterator<Item=(&'a T::AccountId, T::AuthorityId)>
+		where I: Iterator<Item=(&'a T::AccountId, T::AccountId)>
 	{
 		let keys = validators.map(|x| x.1).collect::<Vec<_>>();
 		Self::initialize_keys(&keys);
 	}
 
 	fn on_new_session<'a, I: 'a>(_changed: bool, validators: I, _queued_validators: I)
-		where I: Iterator<Item=(&'a T::AccountId, T::AuthorityId)>
+		where I: Iterator<Item=(&'a T::AccountId, T::AccountId)>
 	{
 		// Remember who the authorities are for the new session.
 		Keys::<T>::put(validators.map(|x| x.1).collect::<Vec<_>>());
