@@ -12,19 +12,19 @@ use rstd::prelude::*;
 use support::{decl_module, decl_event, decl_storage, dispatch::Result};
 use system::ensure_signed;
 use system::offchain::SubmitUnsignedTransaction;
-use session;
+// use session;
 
 use core::convert::TryInto;
 
 /// The module's configuration trait.
-pub trait Trait: system::Trait {
+pub trait Trait: system::Trait  {
 	/// A dispatchable call type.
 	type Call: From<Call<Self>>;
 
 	/// The overarching event type
 	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event> + From<<Self as system::Trait>::Event> + TryInto<Event<Self>>;
 	/// The way through which we submit signed transactions
-	type SubmitTransaction = SubmitUnsignedTransaction<Self, <Self as Trait>::Call>;
+	type SubmitTransaction: SubmitUnsignedTransaction<Self, <Self as Trait>::Call>;
 }
 
 decl_storage! {
