@@ -84,6 +84,7 @@ pub fn new_full<C: Send + Default + 'static>(config: Configuration<C, GenesisCon
 	let name = config.name.clone();
 	let disable_grandpa = config.disable_grandpa;
 	let force_authoring = config.force_authoring;
+	let dev_seed = config.dev_key_seed.clone();
 
 	let (builder, mut import_setup, inherent_data_providers, mut tasks_to_spawn) = new_full_start!(config);
 
@@ -108,16 +109,17 @@ pub fn new_full<C: Send + Default + 'static>(config: Configuration<C, GenesisCon
 		}
 	}
 
-	// TODO Add a proper key for offchaincb
-	service
-		.keystore()
-		.write()
-		.insert_ephemeral_from_seed_by_type::<offchain_cb_runtime::offchaincb_crypto::Pair>(
-			"bottom drive obey lake curtain smoke basket hold race lonely fit walk/Alice",
-			offchain_cb_runtime::offchaincb_crypto::KEY_TYPE,
-		)
-		.unwrap()
-		;
+	if let Some(seed) = dev_seed {
+		service
+			.keystore()
+			.write()
+			.insert_ephemeral_from_seed_by_type::<offchain_cb_runtime::offchaincb_crypto::Pair>(
+				&seed,
+				offchain_cb_runtime::offchaincb_crypto::KEY_TYPE,
+			)
+			.expect("Dev Seed always succeeds");
+	}
+
 
 	if is_authority {
 		let proposer = basic_authorship::ProposerFactory {
