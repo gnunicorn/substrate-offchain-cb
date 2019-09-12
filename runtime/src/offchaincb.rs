@@ -1,19 +1,11 @@
-/// A runtime module template with necessary imports
-
-/// Feel free to remove or edit this file as needed.
-/// If you change the name of this file, make sure to update its references in runtime/src/lib.rs
-/// If you remove this file, you can remove those references
-
-
-/// For more guidance on Substrate modules, see the example module
-/// https://github.com/paritytech/substrate/blob/master/srml/example/src/lib.rs
+ // Ensure we're `no_std` when compiling for Wasm.
+#![cfg_attr(not(feature = "std"), no_std)]
 
 use rstd::prelude::*;
 use app_crypto::RuntimeAppPublic;
-use support::{decl_module, decl_event, decl_storage, dispatch::Result};
-use system::ensure_signed;
+use support::{decl_module, decl_event, decl_storage, StorageValue, dispatch::Result};
+use system::{ensure_signed, ensure_root};
 use system::offchain::SubmitSignedTransaction;
-
 use core::convert::TryInto;
 
 pub const KEY_TYPE: app_crypto::KeyTypeId = app_crypto::KeyTypeId(*b"ofcb");
@@ -27,11 +19,13 @@ pub trait Trait: system::Trait  {
 	/// The way through which we submit signed transactions
 	type SubmitTransaction: SubmitSignedTransaction<Self, <Self as Trait>::Call>;
     /// A key type for offchaincb.
-    type KeyType: RuntimeAppPublic + From<Self::AccountId> + Into<Self::AccountId>;
+    type KeyType: RuntimeAppPublic + From<Self::AccountId> + Into<Self::AccountId> + Clone;
 }
 
 decl_storage! {
 	trait Store for Module<T: Trait> as OffchainCb {
+		/// The current set of keys that may submit pongs
+		Authorities get(authorities): Vec<T::AccountId>;
 	}
 }
 
@@ -43,24 +37,37 @@ decl_module! {
 		// this is needed only if you are using events in your module
 		fn deposit_event() = default;
 
-		// Just a dummy entry point.
-		// function that can be called by the external world as an extrinsics call
-		// takes a parameter of the type `AccountId`, stores it and emits an event
+		// This will trigger the ping to the offchain worker
 		pub fn ping(origin, something: u32) -> Result {
 			let who = ensure_signed(origin)?;
 
-			// here we are raising the Something event
+			// Let's send the ping event out
 			Self::deposit_event(RawEvent::Ping(something, who));
 			Ok(())
 		}
 
-		pub fn pong(origin, something: u32, who: T::AccountId) -> Result {
+		// Function called from the offchain worker to respond to a ping
+		pub fn pong(origin, something: u32) -> Result {
+			// Must be signed
 			let author = ensure_signed(origin)?;
-
-			// here we are raising the Something event
-			Self::deposit_event(RawEvent::Ack(something, author));
+			// And a valid authorities, we accept offchain-worker calls from
+			if Self::is_authority(&author) {
+				// Then we act
+				Self::deposit_event(RawEvent::Ack(something, author));
+			}
+			// Else we just consume their transcation fee without any reaction
 
 			Ok(())
+		}
+
+		// Add a new authority
+		pub fn add_authority(origin, who: T::AccountId) {
+			let _me = ensure_root(origin)?;
+
+			if !Self::is_authority(&who){
+				<Authorities<T>>::mutate(|l| l.push(who));
+			}
+
 		}
 
 		// Runs after every block.q
@@ -72,19 +79,38 @@ decl_module! {
 
 
 impl<T: Trait> Module<T> {
-	fn offchain() {
-		runtime_io::print("Offchain triggered");
 
-		for key in T::KeyType::all() {
-			let key = key.into();
+	fn is_authority(who: &T::AccountId) -> bool {
+		Self::authorities().into_iter().find(|i| i == who).is_some()
+	}
+
+	fn authority_id() -> Option<T::AccountId> {
+		let local_keys = T::KeyType::all().iter().map(
+				|i| (*i).clone().into()
+			).collect::<Vec<T::AccountId>>();
+
+		Self::authorities().into_iter().find_map(|authority| {
+			if local_keys.contains(&authority) {
+				Some(authority)
+			} else {
+				None
+			}
+		})
+	}
+
+	fn offchain() {
+		if let Some(key) = Self::authority_id() {
+			runtime_io::print("Offchain triggered");
 			for e in <system::Module<T>>::events() {
 				let evt: <T as Trait>::Event = e.event.into();
-				if let Ok(Event::<T>::Ping(something, who)) = evt.try_into() {
+				if let Ok(Event::<T>::Ping(something, _who)) = evt.try_into() {
 					runtime_io::print("Received ping, sending pong");
-					let call = Call::pong(something, who);
-					T::SubmitTransaction::sign_and_submit(call, key.clone());
+					let call = Call::pong(something);
+					let _ = T::SubmitTransaction::sign_and_submit(call, key.clone().into());
 				}
 			}
+		} else {
+			runtime_io::print("Skipped Offchain Worker, we aren't a valid authority");
 		}
 	}
 }
