@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>dada</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.js" integrity="sha256-jc6y1s/Y+F+78EgCT/lI2lyU7ys+PFYrRSJ6q8/R8+o=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-rust.min.js" integrity="sha256-NpBHShkm7o+DlVm/qeJtqQGJhVgh4BydBbNvW9Zs3yA=" crossorigin="anonymous"></script>
+    <style>/*--------------------- Layout and Typography ----------------------------*/
+body {
+    font-family: 'Source Serif Pro', 'Book Antiqua', Palatino, FreeSerif, serif;
+    font-size: 15px;
+    line-height: 22px;
+    color: #252519;
+    margin: 0; padding: 0;;
+    background: #f5f5ff;
+}
+a {
+    color: #261a3b;
+}
+a:visited {
+    color: #261a3b;
+}
+p {
+    margin: 0 0 15px 0;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin: 0px 0 15px 0;
+}
+h1 {
+    margin-top: 40px;
+}
+#container {
+    position: relative;
+}
+#jump_to, #jump_page {
+    background: white;
+    -webkit-box-shadow: 0 0 25px #777; -moz-box-shadow: 0 0 25px #777;
+    -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomleft: 5px;
+    font: 10px Arial;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-align: right;
+}
+#jump_to, #jump_wrapper {
+    position: fixed;
+    right: 0; top: 0;
+    padding: 5px 10px;
+}
+#jump_wrapper {
+    padding: 0;
+    display: none;
+}
+#jump_to:hover #jump_wrapper {
+    display: block;
+}
+#jump_page {
+    padding: 5px 0 3px;
+    margin: 0 0 25px 25px;
+}
+#jump_page .source {
+    display: block;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-top: 1px solid #eee;
+}
+#jump_page .source:hover {
+    background: #f5f5ff;
+}
+#jump_page .source:first-child {
+}
+#main {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+.block  {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+
+}
+.docs {
+    width: 640px;
+    border-right: 1px solid #e5e5ee;
+    padding: 0 25px;
+    background: white;
+}
+.code {
+    padding-left: 15px;
+    flex-grow: 1;
+}
+.pilwrap {
+    position: relative;
+}
+.pilcrow {
+    font: 12px Arial;
+    text-decoration: none;
+    color: #454545;
+    position: absolute;
+    top: 3px; left: -20px;
+    padding: 1px 2px;
+    opacity: 0;
+    -webkit-transition: opacity 0.2s linear;
+}
+.docs:hover .pilcrow {
+    opacity: 1;
+}
+code {
+    padding: 14px 15px 16px 0;
+    fo
+}
+pre, tt, code {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Code Pro", Menlo, Monaco, Consolas, "Lucida Console", monospace;
+    margin: 0; padding: 0;
+}
+
+
+/*---------------------- Syntax Highlighting -----------------------------*/
+td.linenos { background-color: #f0f0f0; padding-right: 10px; }
+span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
+
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+/*Theme*/
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+    text-shadow: none;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+    text-shadow: none;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+</style>
+</head>
+<body>
+<div id="container">
+    <div id="main">
+        <div class="block">
+    <div id="section-0" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-0">&#182;</a>
+        </div><h2><code>offchaincb.rs</code></h2>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">// File: runtime/src/offchaincb.rs</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-1" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-1">&#182;</a>
+        </div><h1>Offchain Worker Callback Example</h1>
+<p>This is a minimal example module to show case how the runtime can and should
+interact with an offchain worker asynchronously.</p>
+<p>This example plays simple ping-pong with authenticated off-chain workers:
+Once a signed transaction to <code>ping</code> is submitted, the runtime emits the <code>Ping</code>
+event. After every block the offchain worker is triggered. If it sees the <code>Ping</code>
+event in the current block, it reacts by sending a signed transaction to call
+<code>pong</code>.  When <code>pong</code> is called, it emits an <code>Ack</code> event so it easy to track
+with existing UIs whether the Ping-Pong-Ack happened. The offchain worker does
+not react on <code>Ack</code>.</p>
+<p>However, because the <code>pong</code> contains trusted information (the <code>nonce</code>) the runtime
+can't verify by itself - the key reason why we have the offchain worker in the
+first place, we can't allow just anyone to call <code>pong</code>. Instead the runtime has a
+local list of <code>authorities</code>-keys that allowed to evoke <code>pong</code>. In this simple example
+this list can only be extended via a root call (e.g. <code>sudo</code>). In practice more
+complex management models and session based key rotations should be conidered, but
+this is out of the scope of this example</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust"></code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-2" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-2">&#182;</a>
+        </div><p>Ensure we're <code>no_std</code> when compiling for Wasm. Otherwise our <code>Vec</code> and operations
+on it will fail with <code>invalid</code>.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">#![cfg_attr(not(feature = "std"), no_std)]
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-3" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-3">&#182;</a>
+        </div><p>We have to import a few things</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">use rstd::prelude::*;
+use app_crypto::RuntimeAppPublic;
+use support::{decl_module, decl_event, decl_storage, StorageValue, dispatch::Result};
+use system::{ensure_signed, ensure_root};
+use system::offchain::SubmitSignedTransaction;
+use core::convert::TryInto;
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-4" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-4">&#182;</a>
+        </div><p>Our local KeyType.</p>
+<p>For security reasons the offchain worker doesn't have direct access to tohe keys
+but only to app-specific subkeys, which are defined and grouped  by their KeyTypeId.
+We define it here as <code>ofcb</code> (for <code>offchain callback</code>). Yours should be specific to
+the module you are actually building.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">pub const KEY_TYPE: app_crypto::KeyTypeId = app_crypto::KeyTypeId(*b"ofcb");
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-5" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-5">&#182;</a>
+        </div><p>The module's main configuration trait.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">pub trait Trait: system::Trait  {</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-6" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-6">&#182;</a>
+        </div><p>The regular events type.
+Extended by a few <code>TryInto</code> and other traits so we can match this back
+with our localised event from within the offchain worker after it was emitted.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">	type Event: From&lt;Event&lt;Self>> + Into&lt;&lt;Self as system::Trait>::Event> + From&lt;&lt;Self as system::Trait>::Event> + TryInto&lt;Event&lt;Self>>;
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-7" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-7">&#182;</a>
+        </div><p>A dispatchable call type. We need to define it for the offchain worker to
+reference the <code>pong</code> function it wants to call.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">	type Call: From&lt;Call&lt;Self>>;
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-8" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-8">&#182;</a>
+        </div><p>Let's define the helper we use to create signed transactions with</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">	type SubmitTransaction: SubmitSignedTransaction&lt;Self, &lt;Self as Trait>::Call>;
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-9" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-9">&#182;</a>
+        </div><p>The local keytype</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">	type KeyType: RuntimeAppPublic + From&lt;Self::AccountId> + Into&lt;Self::AccountId> + Clone;
+}
+
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-10" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-10">&#182;</a>
+        </div><p>Then we need some events. The runtime and offchain worker can't talk to one another directly,
+but the runtime can emit events that the offchain worker then react upon. In</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">decl_event!(
+	pub enum Event&lt;T> where AccountId = &lt;T as system::Trait>::AccountId {</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-11" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-11">&#182;</a>
+        </div><p>Emitted when someone asks us to ping</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">		Ping(u8, AccountId),</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-12" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-12">&#182;</a>
+        </div><p>When we received a Pong, we also Ack it.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">		Ack(u8, AccountId),
+	}
+);
+
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-13" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-13">&#182;</a>
+        </div><p>In this example, we only use the store to keep the list of currently
+authorised keys</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">decl_storage! {
+	trait Store for Module&lt;T: Trait> as OffchainCb {</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-14" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-14">&#182;</a>
+        </div><p>The current set of keys that may submit pongs</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">		Authorities get(authorities): Vec&lt;T::AccountId>;
+	}
+}
+
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-15" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-15">&#182;</a>
+        </div><p>The actual Module definition. This is where we create the callable functions</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">decl_module! {
+	pub struct Module&lt;T: Trait> for enum Call where origin: T::Origin {</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-16" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-16">&#182;</a>
+        </div><p>Initializing events</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">		fn deposit_event() = default;
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-17" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-17">&#182;</a>
+        </div><p>The entry point function: emitting a <code>Ping</code> event with the given <code>nonce</code>.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">		pub fn ping(origin, nonce: u8) -> Result {</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-18" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-18">&#182;</a>
+        </div><p>It first ensures the function was signed, then it emits the <code>Ping</code> event
+with our nonce and author. Finally it results with <code>Ok</code>.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">			let who = ensure_signed(origin)?;
+
+			Self::deposit_event(RawEvent::Ping(nonce, who));
+			Ok(())
+		}
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-19" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-19">&#182;</a>
+        </div><p>Called from the offchain worker to respond to a ping</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">		pub fn pong(origin, nonce: u8) -> Result {</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-20" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-20">&#182;</a>
+        </div><p>We don't allow anyone to <code>pong</code> but only those authorised in the <code>authorities</code>
+set at this point. Therefore after ensuring this is singed, we check whether
+that given author is allowed to <code>pong</code> is. If so, we emit the <code>Ack</code> signal,
+otherwise we've just consumed their fee.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">			let author = ensure_signed(origin)?;
+
+			if Self::is_authority(&author) {
+				Self::deposit_event(RawEvent::Ack(nonce, author));
+			}
+
+			Ok(())
+		}
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-21" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-21">&#182;</a>
+        </div><p>Runs after every block within the context and current state of said block.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">		fn offchain_worker(_now: T::BlockNumber) {</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-22" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-22">&#182;</a>
+        </div><p>As <code>pongs</code> are only accepted by authorities, we only run this code,
+if a valid local key is found, we could submit them with.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">			if let Some(key) = Self::authority_id() {
+				Self::offchain(&key);
+			}
+		}
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-23" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-23">&#182;</a>
+        </div><p>Simple authority management: add a new authority to the set of keys that
+are allowed to respond with <code>pong</code>.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">		pub fn add_authority(origin, who: T::AccountId) -> Result {</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-24" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-24">&#182;</a>
+        </div><p>In practice this should be a bit cleverer, but for this example it is enough
+that this is protected by a root-call (e.g. through governance like <code>sudo</code>).</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">			let _me = ensure_root(origin)?;
+
+			if !Self::is_authority(&who){
+				&lt;Authorities&lt;T>>::mutate(|l| l.push(who));
+			}
+
+			Ok(())
+		}
+	}
+}
+
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-25" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-25">&#182;</a>
+        </div><p>We've moved the  helper functions outside of the main decleration for briefety.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">impl&lt;T: Trait> Module&lt;T> {
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-26" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-26">&#182;</a>
+        </div><p>The main entry point, called with account we are supposed to sign with</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">	fn offchain(key: &T::AccountId) {</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-27" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-27">&#182;</a>
+        </div><p>This iterates through all events emitted by the current block and
+attempts to convert them into a local <code>event</code> of this module to find
+the <code>Ping</code>s emitted.
+Once a ping is found, we inform the user via a command line print
+and emit the pong and respond by calling <code>pong</code> as a transaction
+signed with the given key.
+This would be the place, where a regular offchain worker would go off
+and do its actual thing before reponding async at a later point in time.</p>
+<p>Note, that even though this is run directly on the same block, as we are
+creating a new transaction, this will only react <em>in the following</em> block.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">		for e in &lt;system::Module&lt;T>>::events() {
+			let evt: &lt;T as Trait>::Event = e.event.into();
+			if let Ok(Event::&lt;T>::Ping(nonce, _who)) = evt.try_into() {
+				runtime_io::print("Received ping, sending pong");
+				let call = Call::pong(nonce);
+				let _ = T::SubmitTransaction::sign_and_submit(call, key.clone().into());
+			}
+		}
+	}
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-28" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-28">&#182;</a>
+        </div><p>Helper that confirms whether the given <code>AccountId</code> can sign <code>pong</code> transactions</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">	fn is_authority(who: &T::AccountId) -> bool {
+		Self::authorities().into_iter().find(|i| i == who).is_some()
+	}
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-29" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-29">&#182;</a>
+        </div><p>Find a local <code>AccountId</code> we can sign with, that is allowed to <code>pong</code></p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">	fn authority_id() -> Option&lt;T::AccountId> {</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-30" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-30">&#182;</a>
+        </div><p>Find all local keys accessible to this app through the localised KeyType.
+Then go through all keys currently stored on chain and check them against
+the list of local keys until a match is found, otherwise return <code>None</code>.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">		let local_keys = T::KeyType::all().iter().map(
+				|i| (*i).clone().into()
+			).collect::&lt;Vec&lt;T::AccountId>>();
+
+		Self::authorities().into_iter().find_map(|authority| {
+			if local_keys.contains(&authority) {
+				Some(authority)
+			} else {
+				None
+			}
+		})
+	}
+}</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-31" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-31">&#182;</a>
+        </div><h2><code>lib.rs</code></h2>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">// File: runtime/src/lib.rs</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-32" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-32">&#182;</a>
+        </div><p>Based off the regular Substrate Node Template runtime.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">
+#![cfg_attr(not(feature = "std"), no_std)]
+#![recursion_limit="256"]
+
+#[cfg(feature = "std")]
+include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
+
+use rstd::prelude::*;
+use primitives::{OpaqueMetadata, crypto::key_types};
+use sr_primitives::{
+	ApplyResult, transaction_validity::TransactionValidity, generic, create_runtime_str,
+	impl_opaque_keys, AnySignature
+};
+use sr_primitives::traits::{NumberFor, BlakeTwo256, Block as BlockT, DigestFor, StaticLookup, Verify, ConvertInto, SaturatedConversion};
+use sr_primitives::weights::Weight;
+use babe::{AuthorityId as BabeId};
+use grandpa::{AuthorityId as GrandpaId, AuthorityWeight as GrandpaWeight};
+use grandpa::fg_primitives::{self, ScheduledChange};
+use client::{
+	block_builder::api::{CheckInherentsResult, InherentData, self as block_builder_api},
+	runtime_api as client_api, impl_runtime_apis
+};
+use version::RuntimeVersion;
+#[cfg(feature = "std")]
+use version::NativeVersion;
+
+#[cfg(any(feature = "std", test))]
+pub use sr_primitives::BuildStorage;
+pub use timestamp::Call as TimestampCall;
+pub use balances::Call as BalancesCall;
+pub use sr_primitives::{Permill, Perbill};
+pub use support::{StorageValue, construct_runtime, parameter_types};</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-33" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-33">&#182;</a>
+        </div><p>Additionally, we need <code>system</code> here</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">use system::offchain::TransactionSubmitter;
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-34" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-34">&#182;</a>
+        </div><p>Everything else is as usual</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">pub type BlockNumber = u32;
+pub type Signature = AnySignature;
+pub type AccountId = &lt;Signature as Verify>::Signer;
+pub type AccountIndex = u32;
+pub type Balance = u128;
+pub type Index = u32;
+pub type Hash = primitives::H256;
+pub type DigestItem = generic::DigestItem&lt;Hash>;
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-35" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-35">&#182;</a>
+        </div><p>We import our own module here.`</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">mod offchaincb;
+pub mod opaque {
+	use super::*;
+
+	pub use sr_primitives::OpaqueExtrinsic as UncheckedExtrinsic;
+
+	pub type Header = generic::Header&lt;BlockNumber, BlakeTwo256>;
+	pub type Block = generic::Block&lt;Header, UncheckedExtrinsic>;
+	pub type BlockId = generic::BlockId&lt;Block>;
+
+	pub type SessionHandlers = (Grandpa, Babe);
+
+	impl_opaque_keys! {
+		pub struct SessionKeys {
+			#[id(key_types::GRANDPA)]
+			pub grandpa: GrandpaId,
+			#[id(key_types::BABE)]
+			pub babe: BabeId,
+		}
+	}
+}
+
+pub const VERSION: RuntimeVersion = RuntimeVersion {
+	spec_name: create_runtime_str!("offchain-cb"),
+	impl_name: create_runtime_str!("offchain-cb"),
+	authoring_version: 3,
+	spec_version: 4,
+	impl_version: 4,
+	apis: RUNTIME_API_VERSIONS,
+};
+
+pub const MILLISECS_PER_BLOCK: u64 = 6000;
+pub const SLOT_DURATION: u64 = MILLISECS_PER_BLOCK;
+pub const EPOCH_DURATION_IN_BLOCKS: u32 = 10 * MINUTES;
+
+pub const MINUTES: BlockNumber = 60_000 / (MILLISECS_PER_BLOCK as BlockNumber);
+pub const HOURS: BlockNumber = MINUTES * 60;
+pub const DAYS: BlockNumber = HOURS * 24;
+
+pub const PRIMARY_PROBABILITY: (u64, u64) = (1, 4);
+
+#[cfg(feature = "std")]
+pub fn native_version() -> NativeVersion {
+	NativeVersion {
+		runtime_version: VERSION,
+		can_author_with: Default::default(),
+	}
+}
+
+parameter_types! {
+	pub const BlockHashCount: BlockNumber = 250;
+	pub const MaximumBlockWeight: Weight = 1_000_000;
+	pub const AvailableBlockRatio: Perbill = Perbill::from_percent(75);
+	pub const MaximumBlockLength: u32 = 5 * 1024 * 1024;
+	pub const Version: RuntimeVersion = VERSION;
+}
+
+impl system::Trait for Runtime {
+	type AccountId = AccountId;
+	type Call = Call;
+	type Lookup = Indices;
+	type Index = Index;
+	type BlockNumber = BlockNumber;
+	type Hash = Hash;
+	type Hashing = BlakeTwo256;
+	type Header = generic::Header&lt;BlockNumber, BlakeTwo256>;
+	type Event = Event;
+	type WeightMultiplierUpdate = ();
+	type Origin = Origin;
+	type BlockHashCount = BlockHashCount;
+	type MaximumBlockWeight = MaximumBlockWeight;
+	type MaximumBlockLength = MaximumBlockLength;
+	type AvailableBlockRatio = AvailableBlockRatio;
+	type Version = Version;
+}
+
+parameter_types! {
+	pub const EpochDuration: u64 = EPOCH_DURATION_IN_BLOCKS as u64;
+	pub const ExpectedBlockTime: u64 = MILLISECS_PER_BLOCK;
+}
+
+impl babe::Trait for Runtime {
+	type EpochDuration = EpochDuration;
+	type ExpectedBlockTime = ExpectedBlockTime;
+}
+
+impl grandpa::Trait for Runtime {
+	type Event = Event;
+}
+
+impl indices::Trait for Runtime {
+	type AccountIndex = u32;
+	type ResolveHint = indices::SimpleResolveHint&lt;Self::AccountId, Self::AccountIndex>;
+	type IsDeadAccount = Balances;
+	type Event = Event;
+}
+
+parameter_types! {
+	pub const MinimumPeriod: u64 = 5000;
+}
+
+impl timestamp::Trait for Runtime {
+	type Moment = u64;
+	type OnTimestampSet = Babe;
+	type MinimumPeriod = MinimumPeriod;
+}
+
+parameter_types! {
+	pub const ExistentialDeposit: u128 = 500;
+	pub const TransferFee: u128 = 0;
+	pub const CreationFee: u128 = 0;
+	pub const TransactionBaseFee: u128 = 0;
+	pub const TransactionByteFee: u128 = 1;
+}
+
+impl balances::Trait for Runtime {
+	type Balance = Balance;
+	type OnFreeBalanceZero = ();
+	type OnNewAccount = Indices;
+	type Event = Event;
+
+	type TransactionPayment = ();
+	type DustRemoval = ();
+	type TransferPayment = ();
+	type ExistentialDeposit = ExistentialDeposit;
+	type TransferFee = TransferFee;
+	type CreationFee = CreationFee;
+	type TransactionBaseFee = TransactionBaseFee;
+	type TransactionByteFee = TransactionByteFee;
+	type WeightToFee = ConvertInto;
+}
+
+impl sudo::Trait for Runtime {
+	type Event = Event;
+	type Proposal = Call;
+}
+
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-36" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-36">&#182;</a>
+        </div><p>We need to define the AppCrypto for the keys that are authorized
+to <code>pong</code></p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">pub mod offchaincb_crypto {
+	pub use crate::offchaincb::KEY_TYPE;
+	use primitives::sr25519;
+	app_crypto::app_crypto!(sr25519, KEY_TYPE);
+
+	impl From&lt;Signature> for super::Signature {
+		fn from(a: Signature) -> Self {
+			sr25519::Signature::from(a).into()
+		}
+	}
+}
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-37" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-37">&#182;</a>
+        </div><p>We need to define the Transaction signer for that using the Key definition</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">type OffchainCbAccount = offchaincb_crypto::Public;
+type SubmitTransaction = TransactionSubmitter&lt;OffchainCbAccount, Runtime, UncheckedExtrinsic>;
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-38" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-38">&#182;</a>
+        </div><p>Now we configure our Trait usng the previously defined primitives</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">impl offchaincb::Trait for Runtime {
+	type Call = Call;
+	type Event = Event;
+	type SubmitTransaction = SubmitTransaction;
+	type KeyType = OffchainCbAccount;
+}</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-39" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-39">&#182;</a>
+        </div><p>Lastly we also need to implement the CreateTransaction signer for the runtime</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">impl system::offchain::CreateTransaction&lt;Runtime, UncheckedExtrinsic> for Runtime {
+	type Signature = Signature;
+
+	fn create_transaction&lt;F: system::offchain::Signer&lt;AccountId, Self::Signature>>(
+		call: Call,
+		account: AccountId,
+		index: Index,
+	) -> Option&lt;(Call, &lt;UncheckedExtrinsic as sr_primitives::traits::Extrinsic>::SignaturePayload)> {
+		let period = 1 &lt;&lt; 8;
+		let current_block = System::block_number().saturated_into::&lt;u64>();
+		let tip = 0;
+		let extra: SignedExtra = (
+			system::CheckVersion::&lt;Runtime>::new(),
+			system::CheckGenesis::&lt;Runtime>::new(),
+			system::CheckEra::&lt;Runtime>::from(generic::Era::mortal(period, current_block)),
+			system::CheckNonce::&lt;Runtime>::from(index),
+			system::CheckWeight::&lt;Runtime>::new(),
+			balances::TakeFees::&lt;Runtime>::from(tip),
+		);
+		let raw_payload = SignedPayload::new(call, extra).ok()?;
+		let signature = F::sign(account.clone(), &raw_payload)?;
+		let address = Indices::unlookup(account);
+		let (call, extra, _) = raw_payload.deconstruct();
+		Some((call, (address, signature, extra)))
+	}
+}
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-40" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-40">&#182;</a>
+        </div><p>Then all this can be put together</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">construct_runtime!(
+	pub enum Runtime where
+		Block = Block,
+		NodeBlock = opaque::Block,
+		UncheckedExtrinsic = UncheckedExtrinsic
+	{
+		System: system::{Module, Call, Storage, Config, Event},
+		Timestamp: timestamp::{Module, Call, Storage, Inherent},
+		Babe: babe::{Module, Call, Storage, Config, Inherent(Timestamp)},
+		Grandpa: grandpa::{Module, Call, Storage, Config, Event},
+		Indices: indices::{default, Config&lt;T>},
+		Balances: balances,
+		Sudo: sudo,</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-41" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-41">&#182;</a>
+        </div><p>Nothing special here.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">		OffchainCB: offchaincb::{Module, Call, Event&lt;T>, Storage},
+	}
+);
+
+pub type Address = &lt;Indices as StaticLookup>::Source;
+pub type Header = generic::Header&lt;BlockNumber, BlakeTwo256>;
+pub type Block = generic::Block&lt;Header, UncheckedExtrinsic>;
+pub type SignedBlock = generic::SignedBlock&lt;Block>;
+pub type BlockId = generic::BlockId&lt;Block>;
+pub type SignedExtra = (
+	system::CheckVersion&lt;Runtime>,
+	system::CheckGenesis&lt;Runtime>,
+	system::CheckEra&lt;Runtime>,
+	system::CheckNonce&lt;Runtime>,
+	system::CheckWeight&lt;Runtime>,
+	balances::TakeFees&lt;Runtime>
+);
+pub type UncheckedExtrinsic = generic::UncheckedExtrinsic&lt;Address, Call, Signature, SignedExtra>;</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-42" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-42">&#182;</a>
+        </div><p>Just that the Signature Signer needs this aditional definition as well</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">pub type SignedPayload = generic::SignedPayload&lt;Call, SignedExtra>;
+pub type CheckedExtrinsic = generic::CheckedExtrinsic&lt;AccountId, Call, SignedExtra>;
+pub type Executive = executive::Executive&lt;Runtime, Block, system::ChainContext&lt;Runtime>, Runtime, AllModules>;
+
+impl_runtime_apis! {
+	impl client_api::Core&lt;Block> for Runtime {
+		fn version() -> RuntimeVersion {
+			VERSION
+		}
+
+		fn execute_block(block: Block) {
+			Executive::execute_block(block)
+		}
+
+		fn initialize_block(header: &&lt;Block as BlockT>::Header) {
+			Executive::initialize_block(header)
+		}
+	}
+
+	impl client_api::Metadata&lt;Block> for Runtime {
+		fn metadata() -> OpaqueMetadata {
+			Runtime::metadata().into()
+		}
+	}
+
+	impl block_builder_api::BlockBuilder&lt;Block> for Runtime {
+		fn apply_extrinsic(extrinsic: &lt;Block as BlockT>::Extrinsic) -> ApplyResult {
+			Executive::apply_extrinsic(extrinsic)
+		}
+
+		fn finalize_block() -> &lt;Block as BlockT>::Header {
+			Executive::finalize_block()
+		}
+
+		fn inherent_extrinsics(data: InherentData) -> Vec&lt;&lt;Block as BlockT>::Extrinsic> {
+			data.create_extrinsics()
+		}
+
+		fn check_inherents(block: Block, data: InherentData) -> CheckInherentsResult {
+			data.check_extrinsics(&block)
+		}
+
+		fn random_seed() -> &lt;Block as BlockT>::Hash {
+			System::random_seed()
+		}
+	}
+
+	impl client_api::TaggedTransactionQueue&lt;Block> for Runtime {
+		fn validate_transaction(tx: &lt;Block as BlockT>::Extrinsic) -> TransactionValidity {
+			Executive::validate_transaction(tx)
+		}
+	}
+</code></pre>
+    </div>
+</div><div class="block">
+    <div id="section-43" class="docs">
+        <div class="pilwrap">
+            <a class="pilcrow" href="#section-43">&#182;</a>
+        </div><p>This comes with new templates now, if you don't have it, you have to implement
+this trait in order for the Offchain Worker to be triggerd.</p>
+    </div>
+    <div class="code">
+<pre><code class="language-rust">	impl offchain_primitives::OffchainWorkerApi&lt;Block> for Runtime {
+		fn offchain_worker(number: NumberFor&lt;Block>) {
+			Executive::offchain_worker(number)
+		}
+	}
+
+	impl fg_primitives::GrandpaApi&lt;Block> for Runtime {
+		fn grandpa_pending_change(digest: &DigestFor&lt;Block>)
+			-> Option&lt;ScheduledChange&lt;NumberFor&lt;Block>>>
+		{
+			Grandpa::pending_change(digest)
+		}
+
+		fn grandpa_forced_change(digest: &DigestFor&lt;Block>)
+			-> Option&lt;(NumberFor&lt;Block>, ScheduledChange&lt;NumberFor&lt;Block>>)>
+		{
+			Grandpa::forced_change(digest)
+		}
+
+		fn grandpa_authorities() -> Vec&lt;(GrandpaId, GrandpaWeight)> {
+			Grandpa::grandpa_authorities()
+		}
+	}
+
+	impl babe_primitives::BabeApi&lt;Block> for Runtime {
+		fn startup_data() -> babe_primitives::BabeConfiguration {
+			babe_primitives::BabeConfiguration {
+				median_required_blocks: 1000,
+				slot_duration: Babe::slot_duration(),
+				c: PRIMARY_PROBABILITY,
+			}
+		}
+
+		fn epoch() -> babe_primitives::Epoch {
+			babe_primitives::Epoch {
+				start_slot: Babe::epoch_start_slot(),
+				authorities: Babe::authorities(),
+				epoch_index: Babe::epoch_index(),
+				randomness: Babe::randomness(),
+				duration: EpochDuration::get(),
+				secondary_slots: Babe::secondary_slots().0,
+			}
+		}
+	}
+
+	impl substrate_session::SessionKeys&lt;Block> for Runtime {
+		fn generate_session_keys(seed: Option&lt;Vec&lt;u8>>) -> Vec&lt;u8> {
+			let seed = seed.as_ref().map(|s| rstd::str::from_utf8(&s).expect("Seed is an utf8 string"));
+			opaque::SessionKeys::generate(seed)
+		}
+	}
+}</code></pre>
+    </div>
+</div>
+    </div>
+</div>
+</body>
+</html>
