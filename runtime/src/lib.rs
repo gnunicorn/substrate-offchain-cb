@@ -236,7 +236,7 @@ impl system::offchain::CreateTransaction<Runtime, UncheckedExtrinsic> for Runtim
 	}
 }
 
-/// Then all this can be put together
+// Then all this can be put together
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
