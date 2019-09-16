@@ -156,7 +156,7 @@ impl<T: Trait> Module<T> {
 		for e in <system::Module<T>>::events() {
 			let evt: <T as Trait>::Event = e.event.into();
 			if let Ok(Event::<T>::Ping(nonce, _who)) = evt.try_into() {
-				runtime_io::print("Received ping, sending pong");
+				runtime_io::print_utf8(b"Received ping, sending pong");
 				let call = Call::pong(nonce);
 				let _ = T::SubmitTransaction::sign_and_submit(call, key.clone().into());
 			}
