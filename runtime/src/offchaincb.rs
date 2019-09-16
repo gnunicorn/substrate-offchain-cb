@@ -44,7 +44,8 @@ pub trait Trait: system::Trait  {
 	/// The regular events type.
 	/// Extended by a few `TryInto` and other traits so we can match this back
 	/// with our localised event from within the offchain worker after it was emitted.
-	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event> + From<<Self as system::Trait>::Event> + TryInto<Event<Self>>;
+	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>
+				+ From<<Self as system::Trait>::Event> + TryInto<Event<Self>>;
 
 	/// A dispatchable call type. We need to define it for the offchain worker to 
 	/// reference the `pong` function it wants to call.

@@ -1,14 +1,180 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>dada</title>
+    <title>Substrate Offchain Worker Example</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.js" integrity="sha256-jc6y1s/Y+F+78EgCT/lI2lyU7ys+PFYrRSJ6q8/R8+o=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-rust.min.js" integrity="sha256-NpBHShkm7o+DlVm/qeJtqQGJhVgh4BydBbNvW9Zs3yA=" crossorigin="anonymous"></script>
+    <script>var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(){var o=/\blang(?:uage)?-([\w-]+)\b/i,t=0,O=_self.Prism={manual:_self.Prism&&_self.Prism.manual,disableWorkerMessageHandler:_self.Prism&&_self.Prism.disableWorkerMessageHandler,util:{encode:function(e){return e instanceof s?new s(e.type,O.util.encode(e.content),e.alias):"Array"===O.util.type(e)?e.map(O.util.encode):e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).match(/\[object (\w+)\]/)[1]},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++t}),e.__id},clone:function(e,a){var t=O.util.type(e);switch(a=a||{},t){case"Object":if(a[O.util.objId(e)])return a[O.util.objId(e)];var n={};for(var r in a[O.util.objId(e)]=n,e)e.hasOwnProperty(r)&&(n[r]=O.util.clone(e[r],a));return n;case"Array":if(a[O.util.objId(e)])return a[O.util.objId(e)];n=[];return a[O.util.objId(e)]=n,e.forEach(function(e,t){n[t]=O.util.clone(e,a)}),n}return e}},languages:{extend:function(e,t){var a=O.util.clone(O.languages[e]);for(var n in t)a[n]=t[n];return a},insertBefore:function(a,e,t,n){var r=(n=n||O.languages)[a];if(2==arguments.length){for(var i in t=e)t.hasOwnProperty(i)&&(r[i]=t[i]);return r}var s={};for(var l in r)if(r.hasOwnProperty(l)){if(l==e)for(var i in t)t.hasOwnProperty(i)&&(s[i]=t[i]);s[l]=r[l]}return O.languages.DFS(O.languages,function(e,t){t===n[a]&&e!=a&&(this[e]=s)}),n[a]=s},DFS:function(e,t,a,n){for(var r in n=n||{},e)e.hasOwnProperty(r)&&(t.call(e,r,e[r],a||r),"Object"!==O.util.type(e[r])||n[O.util.objId(e[r])]?"Array"!==O.util.type(e[r])||n[O.util.objId(e[r])]||(n[O.util.objId(e[r])]=!0,O.languages.DFS(e[r],t,r,n)):(n[O.util.objId(e[r])]=!0,O.languages.DFS(e[r],t,null,n)))}},plugins:{},highlightAll:function(e,t){O.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,a){var n={callback:a,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};O.hooks.run("before-highlightall",n);for(var r,i=n.elements||e.querySelectorAll(n.selector),s=0;r=i[s++];)O.highlightElement(r,!0===t,n.callback)},highlightElement:function(e,t,a){for(var n,r,i=e;i&&!o.test(i.className);)i=i.parentNode;i&&(n=(i.className.match(o)||[,""])[1].toLowerCase(),r=O.languages[n]),e.className=e.className.replace(o,"").replace(/\s+/g," ")+" language-"+n,e.parentNode&&(i=e.parentNode,/pre/i.test(i.nodeName)&&(i.className=i.className.replace(o,"").replace(/\s+/g," ")+" language-"+n));var s={element:e,language:n,grammar:r,code:e.textContent};if(O.hooks.run("before-sanity-check",s),!s.code||!s.grammar)return s.code&&(O.hooks.run("before-highlight",s),s.element.textContent=s.code,O.hooks.run("after-highlight",s)),void O.hooks.run("complete",s);if(O.hooks.run("before-highlight",s),t&&_self.Worker){var l=new Worker(O.filename);l.onmessage=function(e){s.highlightedCode=e.data,O.hooks.run("before-insert",s),s.element.innerHTML=s.highlightedCode,a&&a.call(s.element),O.hooks.run("after-highlight",s),O.hooks.run("complete",s)},l.postMessage(JSON.stringify({language:s.language,code:s.code,immediateClose:!0}))}else s.highlightedCode=O.highlight(s.code,s.grammar,s.language),O.hooks.run("before-insert",s),s.element.innerHTML=s.highlightedCode,a&&a.call(e),O.hooks.run("after-highlight",s),O.hooks.run("complete",s)},highlight:function(e,t,a){var n={code:e,grammar:t,language:a};return O.hooks.run("before-tokenize",n),n.tokens=O.tokenize(n.code,n.grammar),O.hooks.run("after-tokenize",n),s.stringify(O.util.encode(n.tokens),n.language)},matchGrammar:function(e,t,a,n,r,i,s){var l=O.Token;for(var o in a)if(a.hasOwnProperty(o)&&a[o]){if(o==s)return;var u=a[o];u="Array"===O.util.type(u)?u:[u];for(var g=0;g<u.length;++g){var c=u[g],d=c.inside,p=!!c.lookbehind,m=!!c.greedy,h=0,f=c.alias;if(m&&!c.pattern.global){var y=c.pattern.toString().match(/[imuy]*$/)[0];c.pattern=RegExp(c.pattern.source,y+"g")}c=c.pattern||c;for(var b=n,k=r;b<t.length;k+=t[b].length,++b){var v=t[b];if(t.length>e.length)return;if(!(v instanceof l)){if(m&&b!=t.length-1){if(c.lastIndex=k,!(S=c.exec(e)))break;for(var P=S.index+(p?S[1].length:0),w=S.index+S[0].length,F=b,x=k,A=t.length;F<A&&(x<w||!t[F].type&&!t[F-1].greedy);++F)(x+=t[F].length)<=P&&(++b,k=x);if(t[b]instanceof l)continue;j=F-b,v=e.slice(k,x),S.index-=k}else{c.lastIndex=0;var S=c.exec(v),j=1}if(S){p&&(h=S[1]?S[1].length:0);w=(P=S.index+h)+(S=S[0].slice(h)).length;var _=v.slice(0,P),N=v.slice(w),C=[b,j];_&&(++b,k+=_.length,C.push(_));var E=new l(o,d?O.tokenize(S,d):S,f,S,m);if(C.push(E),N&&C.push(N),Array.prototype.splice.apply(t,C),1!=j&&O.matchGrammar(e,t,a,b,k,!0,o),i)break}else if(i)break}}}}},tokenize:function(e,t,a){var n=[e],r=t.rest;if(r){for(var i in r)t[i]=r[i];delete t.rest}return O.matchGrammar(e,n,t,0,0,!1),n},hooks:{all:{},add:function(e,t){var a=O.hooks.all;a[e]=a[e]||[],a[e].push(t)},run:function(e,t){var a=O.hooks.all[e];if(a&&a.length)for(var n,r=0;n=a[r++];)n(t)}}},s=O.Token=function(e,t,a,n,r){this.type=e,this.content=t,this.alias=a,this.length=0|(n||"").length,this.greedy=!!r};if(s.stringify=function(t,a,e){if("string"==typeof t)return t;if("Array"===O.util.type(t))return t.map(function(e){return s.stringify(e,a,t)}).join("");var n={type:t.type,content:s.stringify(t.content,a,e),tag:"span",classes:["token",t.type],attributes:{},language:a,parent:e};if(t.alias){var r="Array"===O.util.type(t.alias)?t.alias:[t.alias];Array.prototype.push.apply(n.classes,r)}O.hooks.run("wrap",n);var i=Object.keys(n.attributes).map(function(e){return e+'="'+(n.attributes[e]||"").replace(/"/g,"&quot;")+'"'}).join(" ");return"<"+n.tag+' class="'+n.classes.join(" ")+'"'+(i?" "+i:"")+">"+n.content+"</"+n.tag+">"},!_self.document)return _self.addEventListener&&(O.disableWorkerMessageHandler||_self.addEventListener("message",function(e){var t=JSON.parse(e.data),a=t.language,n=t.code,r=t.immediateClose;_self.postMessage(O.highlight(n,O.languages[a],a)),r&&_self.close()},!1)),_self.Prism;var e=document.currentScript||[].slice.call(document.getElementsByTagName("script")).pop();return e&&(O.filename=e.src,O.manual||e.hasAttribute("data-manual")||("loading"!==document.readyState?window.requestAnimationFrame?window.requestAnimationFrame(O.highlightAll):window.setTimeout(O.highlightAll,16):document.addEventListener("DOMContentLoaded",O.highlightAll))),_self.Prism}();"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:/<!--[\s\S]*?-->/,prolog:/<\?[\s\S]+?\?>/,doctype:/<!DOCTYPE[\s\S]+?>/i,cdata:/<!\[CDATA\[[\s\S]*?]]>/i,tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s+[^\s>\/=]+(?:=(?:("|')(?:\\[\s\S]|(?!\1)[^\\])*\1|[^\s'">=]+))?)*\s*\/?>/i,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/i,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"attr-value":{pattern:/=(?:("|')(?:\\[\s\S]|(?!\1)[^\\])*\1|[^\s'">=]+)/i,inside:{punctuation:[/^=/,{pattern:/(^|[^\\])["']/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:/&#?[\da-z]{1,8};/i},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.hooks.add("wrap",function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))}),Prism.languages.xml=Prism.languages.markup,Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:/@[\w-]+?.*?(?:;|(?=\s*\{))/i,inside:{rule:/@[\w-]+/}},url:/url\((?:(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1|.*?)\)/i,selector:/[^{}\s][^{};]*?(?=\s*\{)/,string:{pattern:/("|')(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},property:/[-_a-z\xA0-\uFFFF][-\w\xA0-\uFFFF]*(?=\s*:)/i,important:/\B!important\b/i,function:/[-a-z0-9]+(?=\()/i,punctuation:/[(){};:]/},Prism.languages.css.atrule.inside.rest=Prism.languages.css,Prism.languages.markup&&(Prism.languages.insertBefore("markup","tag",{style:{pattern:/(<style[\s\S]*?>)[\s\S]*?(?=<\/style>)/i,lookbehind:!0,inside:Prism.languages.css,alias:"language-css",greedy:!0}}),Prism.languages.insertBefore("inside","attr-value",{"style-attr":{pattern:/\s*style=("|')(?:\\[\s\S]|(?!\1)[^\\])*\1/i,inside:{"attr-name":{pattern:/^\s*style/i,inside:Prism.languages.markup.tag.inside},punctuation:/^\s*=\s*['"]|['"]\s*$/,"attr-value":{pattern:/.+/i,inside:Prism.languages.css}},alias:"language-css"}},Prism.languages.markup.tag)),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/((?:\b(?:class|interface|extends|implements|trait|instanceof|new)\s+)|(?:catch\s+\())[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:if|else|while|do|for|return|in|instanceof|function|new|try|throw|catch|finally|null|break|continue)\b/,boolean:/\b(?:true|false)\b/,function:/[a-z0-9_]+(?=\()/i,number:/\b0x[\da-f]+\b|(?:\b\d+\.?\d*|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/--?|\+\+?|!=?=?|<=?|>=?|==?=?|&&?|\|\|?|\?|\*|\/|~|\^|%/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{keyword:/\b(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|var|void|while|with|yield)\b/,number:/\b(?:0[xX][\dA-Fa-f]+|0[bB][01]+|0[oO][0-7]+|NaN|Infinity)\b|(?:\b\d+\.?\d*|\B\.\d+)(?:[Ee][+-]?\d+)?/,function:/[_$a-z\xA0-\uFFFF][$\w\xA0-\uFFFF]*(?=\s*\()/i,operator:/-[-=]?|\+[+=]?|!=?=?|<<?=?|>>?>?=?|=(?:==?|>)?|&[&=]?|\|[|=]?|\*\*?=?|\/=?|~|\^=?|%=?|\?|\.{3}/}),Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:/((?:^|[^$\w\xA0-\uFFFF."'\])\s])\s*)\/(\[[^\]\r\n]+]|\\.|[^/\\\[\r\n])+\/[gimyu]{0,5}(?=\s*($|[\r\n,.;})\]]))/,lookbehind:!0,greedy:!0},"function-variable":{pattern:/[_$a-z\xA0-\uFFFF][$\w\xA0-\uFFFF]*(?=\s*=\s*(?:function\b|(?:\([^()]*\)|[_$a-z\xA0-\uFFFF][$\w\xA0-\uFFFF]*)\s*=>))/i,alias:"function"},constant:/\b[A-Z][A-Z\d_]*\b/}),Prism.languages.insertBefore("javascript","string",{"template-string":{pattern:/`(?:\\[\s\S]|\${[^}]+}|[^\\`])*`/,greedy:!0,inside:{interpolation:{pattern:/\${[^}]+}/,inside:{"interpolation-punctuation":{pattern:/^\${|}$/,alias:"punctuation"},rest:null}},string:/[\s\S]+/}}}),Prism.languages.javascript["template-string"].inside.interpolation.inside.rest=Prism.languages.javascript,Prism.languages.markup&&Prism.languages.insertBefore("markup","tag",{script:{pattern:/(<script[\s\S]*?>)[\s\S]*?(?=<\/script>)/i,lookbehind:!0,inside:Prism.languages.javascript,alias:"language-javascript",greedy:!0}}),Prism.languages.js=Prism.languages.javascript,"undefined"!=typeof self&&self.Prism&&self.document&&document.querySelector&&(self.Prism.fileHighlight=function(){var o={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"};Array.prototype.slice.call(document.querySelectorAll("pre[data-src]")).forEach(function(e){for(var t,a=e.getAttribute("data-src"),n=e,r=/\blang(?:uage)?-([\w-]+)\b/i;n&&!r.test(n.className);)n=n.parentNode;if(n&&(t=(e.className.match(r)||[,""])[1]),!t){var i=(a.match(/\.(\w+)$/)||[,""])[1];t=o[i]||i}var s=document.createElement("code");s.className="language-"+t,e.textContent="",s.textContent="Loading…",e.appendChild(s);var l=new XMLHttpRequest;l.open("GET",a,!0),l.onreadystatechange=function(){4==l.readyState&&(l.status<400&&l.responseText?(s.textContent=l.responseText,Prism.highlightElement(s)):400<=l.status?s.textContent="✖ Error "+l.status+" while fetching file: "+l.statusText:s.textContent="✖ Error: File does not exist or is empty")},l.send(null)}),Prism.plugins.toolbar&&Prism.plugins.toolbar.registerButton("download-file",function(e){var t=e.element.parentNode;if(t&&/pre/i.test(t.nodeName)&&t.hasAttribute("data-src")&&t.hasAttribute("data-download-link")){var a=t.getAttribute("data-src"),n=document.createElement("a");return n.textContent=t.getAttribute("data-download-link-label")||"Download",n.setAttribute("download",""),n.href=a,n}})},document.addEventListener("DOMContentLoaded",self.Prism.fileHighlight)); Prism.languages.rust={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?\*\//,lookbehind:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0}],string:[{pattern:/b?r(#*)"(?:\\.|(?!"\1)[^\\\r\n])*"\1/,greedy:!0},{pattern:/b?"(?:\\.|[^\\\r\n"])*"/,greedy:!0}],"char":{pattern:/b?'(?:\\(?:x[0-7][\da-fA-F]|u{(?:[\da-fA-F]_*){1,6}|.)|[^\\\r\n\t'])'/,alias:"string"},"lifetime-annotation":{pattern:/'[^\s>']+/,alias:"symbol"},keyword:/\b(?:abstract|alignof|as|be|box|break|const|continue|crate|do|else|enum|extern|false|final|fn|for|if|impl|in|let|loop|match|mod|move|mut|offsetof|once|override|priv|pub|pure|ref|return|sizeof|static|self|struct|super|true|trait|type|typeof|unsafe|unsized|use|virtual|where|while|yield)\b/,attribute:{pattern:/#!?\[.+?\]/,greedy:!0,alias:"attr-name"},"function":[/\w+(?=\s*\()/,/\w+!(?=\s*\(|\[)/],"macro-rules":{pattern:/\w+!/,alias:"function"},number:/\b(?:0x[\dA-Fa-f](?:_?[\dA-Fa-f])*|0o[0-7](?:_?[0-7])*|0b[01](?:_?[01])*|(\d(?:_?\d)*)?\.?\d(?:_?\d)*(?:[Ee][+-]?\d+)?)(?:_?(?:[iu](?:8|16|32|64)?|f32|f64))?\b/,"closure-params":{pattern:/\|[^|]*\|(?=\s*[{-])/,inside:{punctuation:/[|:,]/,operator:/[&*]/}},punctuation:/[{}[\];(),:]|\.+|->/,operator:/[-+*\/%!^]=?|=[=>]?|@|&[&=]?|\|[|=]?|<<?=?|>>?=?/}; (function () {
+
+	if (typeof self === 'undefined' || !self.Prism || !self.document) {
+		return;
+	}
+
+	/**
+	 * Plugin name which is used as a class name for <pre> which is activating the plugin
+	 * @type {String}
+	 */
+	var PLUGIN_NAME = 'line-numbers';
+
+	/**
+	 * Regular expression used for determining line breaks
+	 * @type {RegExp}
+	 */
+	var NEW_LINE_EXP = /\n(?!$)/g;
+
+	/**
+	 * Resizes line numbers spans according to height of line of code
+	 * @param {Element} element <pre> element
+	 */
+	var _resizeElement = function (element) {
+		var codeStyles = getStyles(element);
+		var whiteSpace = codeStyles['white-space'];
+
+		if (whiteSpace === 'pre-wrap' || whiteSpace === 'pre-line') {
+			var codeElement = element.querySelector('code');
+			var lineNumbersWrapper = element.querySelector('.line-numbers-rows');
+			var lineNumberSizer = element.querySelector('.line-numbers-sizer');
+			var codeLines = codeElement.textContent.split(NEW_LINE_EXP);
+
+			if (!lineNumberSizer) {
+				lineNumberSizer = document.createElement('span');
+				lineNumberSizer.className = 'line-numbers-sizer';
+
+				codeElement.appendChild(lineNumberSizer);
+			}
+
+			lineNumberSizer.style.display = 'block';
+
+			codeLines.forEach(function (line, lineNumber) {
+				lineNumberSizer.textContent = line || '\n';
+				var lineSize = lineNumberSizer.getBoundingClientRect().height;
+				lineNumbersWrapper.children[lineNumber].style.height = lineSize + 'px';
+			});
+
+			lineNumberSizer.textContent = '';
+			lineNumberSizer.style.display = 'none';
+		}
+	};
+
+	/**
+	 * Returns style declarations for the element
+	 * @param {Element} element
+	 */
+	var getStyles = function (element) {
+		if (!element) {
+			return null;
+		}
+
+		return window.getComputedStyle ? getComputedStyle(element) : (element.currentStyle || null);
+	};
+
+	window.addEventListener('resize', function () {
+		Array.prototype.forEach.call(document.querySelectorAll('pre.' + PLUGIN_NAME), _resizeElement);
+	});
+
+	Prism.hooks.add('complete', function (env) {
+		if (!env.code) {
+			return;
+		}
+
+		var code = env.element;
+		var pre = code.parentNode;
+
+		// works only for <code> wrapped inside <pre> (not inline)
+		if (!pre || !/pre/i.test(pre.nodeName)) {
+			return;
+		}
+
+		// Abort if line numbers already exists
+		if (code.querySelector('.line-numbers-rows')) {
+			return;
+		}
+
+		var addLineNumbers = false;
+		var lineNumbersRegex = /(?:^|\s)line-numbers(?:\s|$)/;
+
+		for (var element = code; element; element = element.parentNode) {
+			if (lineNumbersRegex.test(element.className)) {
+				addLineNumbers = true;
+				break;
+			}
+		}
+
+		// only add line numbers if <code> or one of its ancestors has the `line-numbers` class
+		if (!addLineNumbers) {
+			return;
+		}
+
+		// Remove the class 'line-numbers' from the <code>
+		code.className = code.className.replace(lineNumbersRegex, ' ');
+		// Add the class 'line-numbers' to the <pre>
+		if (!lineNumbersRegex.test(pre.className)) {
+			pre.className += ' line-numbers';
+		}
+
+		var match = env.code.match(NEW_LINE_EXP);
+		var linesNum = match ? match.length + 1 : 1;
+		var lineNumbersWrapper;
+
+		var lines = new Array(linesNum + 1).join('<span></span>');
+
+		lineNumbersWrapper = document.createElement('span');
+		lineNumbersWrapper.setAttribute('aria-hidden', 'true');
+		lineNumbersWrapper.className = 'line-numbers-rows';
+		lineNumbersWrapper.innerHTML = lines;
+
+		if (pre.hasAttribute('data-start')) {
+			pre.style.counterReset = 'linenumber ' + (parseInt(pre.getAttribute('data-start'), 10) - 1);
+		}
+
+		env.element.appendChild(lineNumbersWrapper);
+
+		_resizeElement(pre);
+
+		Prism.hooks.run('line-numbers', env);
+	});
+
+	Prism.hooks.add('line-numbers', function (env) {
+		env.plugins = env.plugins || {};
+		env.plugins.lineNumbers = true;
+	});
+
+	/**
+	 * Global exports
+	 */
+	Prism.plugins.lineNumbers = {
+		/**
+		 * Get node for provided line number
+		 * @param {Element} element pre element
+		 * @param {Number} number line number
+		 * @return {Element|undefined}
+		 */
+		getLine: function (element, number) {
+			if (element.tagName !== 'PRE' || !element.classList.contains(PLUGIN_NAME)) {
+				return;
+			}
+
+			var lineNumberRows = element.querySelector('.line-numbers-rows');
+			var lineNumberStart = parseInt(element.getAttribute('data-start'), 10) || 1;
+			var lineNumberEnd = lineNumberStart + (lineNumberRows.children.length - 1);
+
+			if (number < lineNumberStart) {
+				number = lineNumberStart;
+			}
+			if (number > lineNumberEnd) {
+				number = lineNumberEnd;
+			}
+
+			var lineIndex = number - lineNumberStart;
+
+			return lineNumberRows.children[lineIndex];
+		}
+	};
+
+}());</script>
     <style>/*--------------------- Layout and Typography ----------------------------*/
 body {
     font-family: 'Source Serif Pro', 'Book Antiqua', Palatino, FreeSerif, serif;
-    font-size: 15px;
+    font-size: 10px;
     line-height: 22px;
     color: #252519;
     margin: 0; padding: 0;;
@@ -68,6 +234,7 @@ h1 {
 }
 #jump_page .source:first-child {
 }
+
 #main {
     padding: 0;
     display: flex;
@@ -78,18 +245,20 @@ h1 {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: stretch;
-
 }
 .docs {
-    width: 640px;
     border-right: 1px solid #e5e5ee;
-    padding: 0 25px;
+    padding: 5px 25px 0;
     background: white;
 }
 .code {
-    padding-left: 15px;
-    flex-grow: 1;
+    padding: 5px 15px 0;
 }
+
+.block:hover .docs, .block:hover .code{
+    background: #fffbdd;
+}
+
 .pilwrap {
     position: relative;
 }
@@ -108,7 +277,6 @@ h1 {
 }
 code {
     padding: 14px 15px 16px 0;
-    fo
 }
 pre, tt, code {
     font-size: 14px;
@@ -130,8 +298,7 @@ span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
 
 /*Theme*/
 
-code[class*="language-"],
-pre[class*="language-"] {
+code[class*="language-"]{
     color: black;
     background: none;
     text-shadow: 0 1px white;
@@ -163,6 +330,46 @@ code[class*="language-"]::selection, code[class*="language-"] ::selection {
     text-shadow: none;
 }
 
+pre[class*="language-"].line-numbers {
+	position: relative;
+	padding-left: 3.8em;
+	counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+	position: relative;
+	white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+	position: absolute;
+	pointer-events: none;
+	top: 0;
+    left: -3.8em;
+	width: 4em; /* works for line-numbers below 1000 lines */
+	letter-spacing: -1px;
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+}
+
+	.line-numbers-rows > span {
+		pointer-events: none;
+		display: block;
+		counter-increment: linenumber;
+	}
+
+		.line-numbers-rows > span:before {
+			content: counter(linenumber);
+			color: #999;
+			display: block;
+			padding-right: 0.8em;
+			text-align: right;
+		}
+
 @media print {
     code[class*="language-"],
     pre[class*="language-"] {
@@ -174,7 +381,8 @@ code[class*="language-"]::selection, code[class*="language-"] ::selection {
 pre[class*="language-"] {
     padding: 0;
     margin: 0;
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 :not(pre) > code[class*="language-"],
@@ -258,19 +466,125 @@ pre[class*="language-"] {
 .token.entity {
     cursor: help;
 }
+
+
+/* Floating and sizes */
+
+/* Custom, iPhone Retina */ 
+@media only screen and (max-width : 959px) {
+
+    body {
+        font-size: 15px;
+        line-height: 22px;
+    }
+
+    pre, tt, code {
+        font-size: 14px;
+        line-height: 18px;
+    }
+    
+    .block {
+        flex-direction: column;
+    }
+
+    .block .docs {
+        padding-top: 25px; 
+    }
+
+    .block .docs p:last-child {
+        margin-bottom: 5px; 
+    }
+
+    .code  {
+        padding-left: 0;
+    }
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 960px) {
+
+    
+    body {
+        font-size: 14px;
+        line-height: 22px;
+    }
+
+    pre, tt, code {
+        font-size: 12px;
+        line-height: 16px;
+    }
+
+    .docs {
+        width: 300px;
+    }
+    
+    .docs:last-child {
+        flex-grow: 1;
+    }
+
+    .code {
+        flex-grow: 1;
+        width: calc(100vw - 550px);
+    }
+
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+    
+    body {
+        font-size: 15px;
+        line-height: 22px;
+    }
+
+    pre, tt, code {
+        font-size: 14px;
+        line-height: 18px;
+    }
+
+    .docs {
+        width: 500px;
+    }
+
+    .code {
+        flex-grow: 1;
+        width: calc(100vw - 600px);
+    }
+}
+
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1400px) {
+    
+    body {
+        font-size: 15px;
+        line-height: 22px;
+    }
+
+    pre, tt, code {
+        font-size: 14px;
+        line-height: 18px;
+    }
+
+    .docs {
+        width: 600px;
+    }
+
+    .code {
+        flex-grow: 1;
+        width: 700px;
+    }
+}
 </style>
 </head>
-<body>
+<body class="line-numbers">
 <div id="container">
     <div id="main">
         <div class="block">
     <div id="section-0" class="docs">
         <div class="pilwrap">
             <a class="pilcrow" href="#section-0">&#182;</a>
-        </div><h2><code>offchaincb.rs</code></h2>
-    </div>
-    <div class="code">
-<pre><code class="language-rust">// File: runtime/src/offchaincb.rs</code></pre>
+        </div><p><strong><code>offchaincb.rs</code></strong> (in <code>runtime/src</code>)</p>
     </div>
 </div><div class="block">
     <div id="section-1" class="docs">
@@ -294,9 +608,6 @@ this list can only be extended via a root call (e.g. <code>sudo</code>). In prac
 complex management models and session based key rotations should be conidered, but
 this is out of the scope of this example</p>
     </div>
-    <div class="code">
-<pre><code class="language-rust"></code></pre>
-    </div>
 </div><div class="block">
     <div id="section-2" class="docs">
         <div class="pilwrap">
@@ -305,7 +616,7 @@ this is out of the scope of this example</p>
 on it will fail with <code>invalid</code>.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">#![cfg_attr(not(feature = "std"), no_std)]
+<pre data-start="22"><code class="language-rust line-numbers">#![cfg_attr(not(feature = "std"), no_std)]
 </code></pre>
     </div>
 </div><div class="block">
@@ -315,7 +626,7 @@ on it will fail with <code>invalid</code>.</p>
         </div><p>We have to import a few things</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">use rstd::prelude::*;
+<pre data-start="26"><code class="language-rust line-numbers">use rstd::prelude::*;
 use app_crypto::RuntimeAppPublic;
 use support::{decl_module, decl_event, decl_storage, StorageValue, dispatch::Result};
 use system::{ensure_signed, ensure_root};
@@ -334,7 +645,7 @@ We define it here as <code>ofcb</code> (for <code>offchain callback</code>). You
 the module you are actually building.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">pub const KEY_TYPE: app_crypto::KeyTypeId = app_crypto::KeyTypeId(*b"ofcb");
+<pre data-start="34"><code class="language-rust line-numbers">pub const KEY_TYPE: app_crypto::KeyTypeId = app_crypto::KeyTypeId(*b"ofcb");
 </code></pre>
     </div>
 </div><div class="block">
@@ -344,7 +655,7 @@ the module you are actually building.</p>
         </div><p>The module's main configuration trait.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">pub trait Trait: system::Trait  {</code></pre>
+<pre data-start="42"><code class="language-rust line-numbers">pub trait Trait: system::Trait  {</code></pre>
     </div>
 </div><div class="block">
     <div id="section-6" class="docs">
@@ -355,7 +666,8 @@ Extended by a few <code>TryInto</code> and other traits so we can match this bac
 with our localised event from within the offchain worker after it was emitted.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">	type Event: From&lt;Event&lt;Self>> + Into&lt;&lt;Self as system::Trait>::Event> + From&lt;&lt;Self as system::Trait>::Event> + TryInto&lt;Event&lt;Self>>;
+<pre data-start="44"><code class="language-rust line-numbers">	type Event: From&lt;Event&lt;Self>> + Into&lt;&lt;Self as system::Trait>::Event>
+				+ From&lt;&lt;Self as system::Trait>::Event> + TryInto&lt;Event&lt;Self>>;
 </code></pre>
     </div>
 </div><div class="block">
@@ -366,7 +678,7 @@ with our localised event from within the offchain worker after it was emitted.</
 reference the <code>pong</code> function it wants to call.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">	type Call: From&lt;Call&lt;Self>>;
+<pre data-start="50"><code class="language-rust line-numbers">	type Call: From&lt;Call&lt;Self>>;
 </code></pre>
     </div>
 </div><div class="block">
@@ -376,7 +688,7 @@ reference the <code>pong</code> function it wants to call.</p>
         </div><p>Let's define the helper we use to create signed transactions with</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">	type SubmitTransaction: SubmitSignedTransaction&lt;Self, &lt;Self as Trait>::Call>;
+<pre data-start="54"><code class="language-rust line-numbers">	type SubmitTransaction: SubmitSignedTransaction&lt;Self, &lt;Self as Trait>::Call>;
 </code></pre>
     </div>
 </div><div class="block">
@@ -386,7 +698,7 @@ reference the <code>pong</code> function it wants to call.</p>
         </div><p>The local keytype</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">	type KeyType: RuntimeAppPublic + From&lt;Self::AccountId> + Into&lt;Self::AccountId> + Clone;
+<pre data-start="57"><code class="language-rust line-numbers">	type KeyType: RuntimeAppPublic + From&lt;Self::AccountId> + Into&lt;Self::AccountId> + Clone;
 }
 
 </code></pre>
@@ -399,7 +711,7 @@ reference the <code>pong</code> function it wants to call.</p>
 but the runtime can emit events that the offchain worker then react upon. In</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">decl_event!(
+<pre data-start="62"><code class="language-rust line-numbers">decl_event!(
 	pub enum Event&lt;T> where AccountId = &lt;T as system::Trait>::AccountId {</code></pre>
     </div>
 </div><div class="block">
@@ -409,7 +721,7 @@ but the runtime can emit events that the offchain worker then react upon. In</p>
         </div><p>Emitted when someone asks us to ping</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">		Ping(u8, AccountId),</code></pre>
+<pre data-start="66"><code class="language-rust line-numbers">		Ping(u8, AccountId),</code></pre>
     </div>
 </div><div class="block">
     <div id="section-12" class="docs">
@@ -418,7 +730,7 @@ but the runtime can emit events that the offchain worker then react upon. In</p>
         </div><p>When we received a Pong, we also Ack it.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">		Ack(u8, AccountId),
+<pre data-start="68"><code class="language-rust line-numbers">		Ack(u8, AccountId),
 	}
 );
 
@@ -432,7 +744,7 @@ but the runtime can emit events that the offchain worker then react upon. In</p>
 authorised keys</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">decl_storage! {
+<pre data-start="74"><code class="language-rust line-numbers">decl_storage! {
 	trait Store for Module&lt;T: Trait> as OffchainCb {</code></pre>
     </div>
 </div><div class="block">
@@ -442,7 +754,7 @@ authorised keys</p>
         </div><p>The current set of keys that may submit pongs</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">		Authorities get(authorities): Vec&lt;T::AccountId>;
+<pre data-start="78"><code class="language-rust line-numbers">		Authorities get(authorities): Vec&lt;T::AccountId>;
 	}
 }
 
@@ -455,7 +767,7 @@ authorised keys</p>
         </div><p>The actual Module definition. This is where we create the callable functions</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">decl_module! {
+<pre data-start="84"><code class="language-rust line-numbers">decl_module! {
 	pub struct Module&lt;T: Trait> for enum Call where origin: T::Origin {</code></pre>
     </div>
 </div><div class="block">
@@ -465,7 +777,7 @@ authorised keys</p>
         </div><p>Initializing events</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">		fn deposit_event() = default;
+<pre data-start="87"><code class="language-rust line-numbers">		fn deposit_event() = default;
 </code></pre>
     </div>
 </div><div class="block">
@@ -475,7 +787,7 @@ authorised keys</p>
         </div><p>The entry point function: emitting a <code>Ping</code> event with the given <code>nonce</code>.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">		pub fn ping(origin, nonce: u8) -> Result {</code></pre>
+<pre data-start="90"><code class="language-rust line-numbers">		pub fn ping(origin, nonce: u8) -> Result {</code></pre>
     </div>
 </div><div class="block">
     <div id="section-18" class="docs">
@@ -485,7 +797,7 @@ authorised keys</p>
 with our nonce and author. Finally it results with <code>Ok</code>.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">			let who = ensure_signed(origin)?;
+<pre data-start="92"><code class="language-rust line-numbers">			let who = ensure_signed(origin)?;
 
 			Self::deposit_event(RawEvent::Ping(nonce, who));
 			Ok(())
@@ -499,7 +811,7 @@ with our nonce and author. Finally it results with <code>Ok</code>.</p>
         </div><p>Called from the offchain worker to respond to a ping</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">		pub fn pong(origin, nonce: u8) -> Result {</code></pre>
+<pre data-start="100"><code class="language-rust line-numbers">		pub fn pong(origin, nonce: u8) -> Result {</code></pre>
     </div>
 </div><div class="block">
     <div id="section-20" class="docs">
@@ -511,7 +823,7 @@ that given author is allowed to <code>pong</code> is. If so, we emit the <code>A
 otherwise we've just consumed their fee.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">			let author = ensure_signed(origin)?;
+<pre data-start="102"><code class="language-rust line-numbers">			let author = ensure_signed(origin)?;
 
 			if Self::is_authority(&author) {
 				Self::deposit_event(RawEvent::Ack(nonce, author));
@@ -528,7 +840,7 @@ otherwise we've just consumed their fee.</p>
         </div><p>Runs after every block within the context and current state of said block.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">		fn offchain_worker(_now: T::BlockNumber) {</code></pre>
+<pre data-start="115"><code class="language-rust line-numbers">		fn offchain_worker(_now: T::BlockNumber) {</code></pre>
     </div>
 </div><div class="block">
     <div id="section-22" class="docs">
@@ -538,7 +850,7 @@ otherwise we've just consumed their fee.</p>
 if a valid local key is found, we could submit them with.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">			if let Some(key) = Self::authority_id() {
+<pre data-start="117"><code class="language-rust line-numbers">			if let Some(key) = Self::authority_id() {
 				Self::offchain(&key);
 			}
 		}
@@ -552,7 +864,7 @@ if a valid local key is found, we could submit them with.</p>
 are allowed to respond with <code>pong</code>.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">		pub fn add_authority(origin, who: T::AccountId) -> Result {</code></pre>
+<pre data-start="124"><code class="language-rust line-numbers">		pub fn add_authority(origin, who: T::AccountId) -> Result {</code></pre>
     </div>
 </div><div class="block">
     <div id="section-24" class="docs">
@@ -562,7 +874,7 @@ are allowed to respond with <code>pong</code>.</p>
 that this is protected by a root-call (e.g. through governance like <code>sudo</code>).</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">			let _me = ensure_root(origin)?;
+<pre data-start="127"><code class="language-rust line-numbers">			let _me = ensure_root(origin)?;
 
 			if !Self::is_authority(&who){
 				&lt;Authorities&lt;T>>::mutate(|l| l.push(who));
@@ -582,7 +894,7 @@ that this is protected by a root-call (e.g. through governance like <code>sudo</
         </div><p>We've moved the  helper functions outside of the main decleration for briefety.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">impl&lt;T: Trait> Module&lt;T> {
+<pre data-start="141"><code class="language-rust line-numbers">impl&lt;T: Trait> Module&lt;T> {
 </code></pre>
     </div>
 </div><div class="block">
@@ -592,7 +904,7 @@ that this is protected by a root-call (e.g. through governance like <code>sudo</
         </div><p>The main entry point, called with account we are supposed to sign with</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">	fn offchain(key: &T::AccountId) {</code></pre>
+<pre data-start="144"><code class="language-rust line-numbers">	fn offchain(key: &T::AccountId) {</code></pre>
     </div>
 </div><div class="block">
     <div id="section-27" class="docs">
@@ -610,10 +922,10 @@ and do its actual thing before reponding async at a later point in time.</p>
 creating a new transaction, this will only react <em>in the following</em> block.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">		for e in &lt;system::Module&lt;T>>::events() {
+<pre data-start="146"><code class="language-rust line-numbers">		for e in &lt;system::Module&lt;T>>::events() {
 			let evt: &lt;T as Trait>::Event = e.event.into();
 			if let Ok(Event::&lt;T>::Ping(nonce, _who)) = evt.try_into() {
-				runtime_io::print("Received ping, sending pong");
+				runtime_io::print_utf8(b"Received ping, sending pong");
 				let call = Call::pong(nonce);
 				let _ = T::SubmitTransaction::sign_and_submit(call, key.clone().into());
 			}
@@ -628,7 +940,7 @@ creating a new transaction, this will only react <em>in the following</em> block
         </div><p>Helper that confirms whether the given <code>AccountId</code> can sign <code>pong</code> transactions</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">	fn is_authority(who: &T::AccountId) -> bool {
+<pre data-start="167"><code class="language-rust line-numbers">	fn is_authority(who: &T::AccountId) -> bool {
 		Self::authorities().into_iter().find(|i| i == who).is_some()
 	}
 </code></pre>
@@ -640,7 +952,7 @@ creating a new transaction, this will only react <em>in the following</em> block
         </div><p>Find a local <code>AccountId</code> we can sign with, that is allowed to <code>pong</code></p>
     </div>
     <div class="code">
-<pre><code class="language-rust">	fn authority_id() -> Option&lt;T::AccountId> {</code></pre>
+<pre data-start="172"><code class="language-rust line-numbers">	fn authority_id() -> Option&lt;T::AccountId> {</code></pre>
     </div>
 </div><div class="block">
     <div id="section-30" class="docs">
@@ -651,7 +963,7 @@ Then go through all keys currently stored on chain and check them against
 the list of local keys until a match is found, otherwise return <code>None</code>.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">		let local_keys = T::KeyType::all().iter().map(
+<pre data-start="174"><code class="language-rust line-numbers">		let local_keys = T::KeyType::all().iter().map(
 				|i| (*i).clone().into()
 			).collect::&lt;Vec&lt;T::AccountId>>();
 
@@ -669,10 +981,7 @@ the list of local keys until a match is found, otherwise return <code>None</code
     <div id="section-31" class="docs">
         <div class="pilwrap">
             <a class="pilcrow" href="#section-31">&#182;</a>
-        </div><h2><code>lib.rs</code></h2>
-    </div>
-    <div class="code">
-<pre><code class="language-rust">// File: runtime/src/lib.rs</code></pre>
+        </div><p><strong><code>lib.rs</code></strong> (in <code>runtime/src</code>)</p>
     </div>
 </div><div class="block">
     <div id="section-32" class="docs">
@@ -681,7 +990,7 @@ the list of local keys until a match is found, otherwise return <code>None</code
         </div><p>Based off the regular Substrate Node Template runtime.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">
+<pre data-start="1"><code class="language-rust line-numbers">
 #![cfg_attr(not(feature = "std"), no_std)]
 #![recursion_limit="256"]
 
@@ -694,7 +1003,8 @@ use sr_primitives::{
 	ApplyResult, transaction_validity::TransactionValidity, generic, create_runtime_str,
 	impl_opaque_keys, AnySignature
 };
-use sr_primitives::traits::{NumberFor, BlakeTwo256, Block as BlockT, DigestFor, StaticLookup, Verify, ConvertInto, SaturatedConversion};
+use sr_primitives::traits::{NumberFor, BlakeTwo256, Block as BlockT, DigestFor, StaticLookup,
+							Verify, ConvertInto, SaturatedConversion};
 use sr_primitives::weights::Weight;
 use babe::{AuthorityId as BabeId};
 use grandpa::{AuthorityId as GrandpaId, AuthorityWeight as GrandpaWeight};
@@ -721,7 +1031,7 @@ pub use support::{StorageValue, construct_runtime, parameter_types};</code></pre
         </div><p>Additionally, we need <code>system</code> here</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">use system::offchain::TransactionSubmitter;
+<pre data-start="35"><code class="language-rust line-numbers">use system::offchain::TransactionSubmitter;
 </code></pre>
     </div>
 </div><div class="block">
@@ -731,7 +1041,7 @@ pub use support::{StorageValue, construct_runtime, parameter_types};</code></pre
         </div><p>Everything else is as usual</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">pub type BlockNumber = u32;
+<pre data-start="38"><code class="language-rust line-numbers">pub type BlockNumber = u32;
 pub type Signature = AnySignature;
 pub type AccountId = &lt;Signature as Verify>::Signer;
 pub type AccountIndex = u32;
@@ -748,7 +1058,7 @@ pub type DigestItem = generic::DigestItem&lt;Hash>;
         </div><p>We import our own module here.`</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">mod offchaincb;
+<pre data-start="48"><code class="language-rust line-numbers">mod offchaincb;
 pub mod opaque {
 	use super::*;
 
@@ -895,7 +1205,7 @@ impl sudo::Trait for Runtime {
 to <code>pong</code></p>
     </div>
     <div class="code">
-<pre><code class="language-rust">pub mod offchaincb_crypto {
+<pre data-start="187"><code class="language-rust line-numbers">pub mod offchaincb_crypto {
 	pub use crate::offchaincb::KEY_TYPE;
 	use primitives::sr25519;
 	app_crypto::app_crypto!(sr25519, KEY_TYPE);
@@ -915,7 +1225,7 @@ to <code>pong</code></p>
         </div><p>We need to define the Transaction signer for that using the Key definition</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">type OffchainCbAccount = offchaincb_crypto::Public;
+<pre data-start="201"><code class="language-rust line-numbers">type OffchainCbAccount = offchaincb_crypto::Public;
 type SubmitTransaction = TransactionSubmitter&lt;OffchainCbAccount, Runtime, UncheckedExtrinsic>;
 </code></pre>
     </div>
@@ -926,7 +1236,7 @@ type SubmitTransaction = TransactionSubmitter&lt;OffchainCbAccount, Runtime, Unc
         </div><p>Now we configure our Trait usng the previously defined primitives</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">impl offchaincb::Trait for Runtime {
+<pre data-start="205"><code class="language-rust line-numbers">impl offchaincb::Trait for Runtime {
 	type Call = Call;
 	type Event = Event;
 	type SubmitTransaction = SubmitTransaction;
@@ -940,7 +1250,7 @@ type SubmitTransaction = TransactionSubmitter&lt;OffchainCbAccount, Runtime, Unc
         </div><p>Lastly we also need to implement the CreateTransaction signer for the runtime</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">impl system::offchain::CreateTransaction&lt;Runtime, UncheckedExtrinsic> for Runtime {
+<pre data-start="212"><code class="language-rust line-numbers">impl system::offchain::CreateTransaction&lt;Runtime, UncheckedExtrinsic> for Runtime {
 	type Signature = Signature;
 
 	fn create_transaction&lt;F: system::offchain::Signer&lt;AccountId, Self::Signature>>(
@@ -975,7 +1285,7 @@ type SubmitTransaction = TransactionSubmitter&lt;OffchainCbAccount, Runtime, Unc
         </div><p>Then all this can be put together</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">construct_runtime!(
+<pre data-start="240"><code class="language-rust line-numbers">construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
 		NodeBlock = opaque::Block,
@@ -996,7 +1306,7 @@ type SubmitTransaction = TransactionSubmitter&lt;OffchainCbAccount, Runtime, Unc
         </div><p>Nothing special here.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">		OffchainCB: offchaincb::{Module, Call, Event&lt;T>, Storage},
+<pre data-start="254"><code class="language-rust line-numbers">		OffchainCB: offchaincb::{Module, Call, Event&lt;T>, Storage},
 	}
 );
 
@@ -1022,7 +1332,7 @@ pub type UncheckedExtrinsic = generic::UncheckedExtrinsic&lt;Address, Call, Sign
         </div><p>Just that the Signature Signer needs this aditional definition as well</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">pub type SignedPayload = generic::SignedPayload&lt;Call, SignedExtra>;
+<pre data-start="273"><code class="language-rust line-numbers">pub type SignedPayload = generic::SignedPayload&lt;Call, SignedExtra>;
 pub type CheckedExtrinsic = generic::CheckedExtrinsic&lt;AccountId, Call, SignedExtra>;
 pub type Executive = executive::Executive&lt;Runtime, Block, system::ChainContext&lt;Runtime>, Runtime, AllModules>;
 
@@ -1084,7 +1394,7 @@ impl_runtime_apis! {
 this trait in order for the Offchain Worker to be triggerd.</p>
     </div>
     <div class="code">
-<pre><code class="language-rust">	impl offchain_primitives::OffchainWorkerApi&lt;Block> for Runtime {
+<pre data-start="327"><code class="language-rust line-numbers">	impl offchain_primitives::OffchainWorkerApi&lt;Block> for Runtime {
 		fn offchain_worker(number: NumberFor&lt;Block>) {
 			Executive::offchain_worker(number)
 		}

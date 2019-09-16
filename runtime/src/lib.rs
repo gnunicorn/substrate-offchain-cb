@@ -12,7 +12,8 @@ use sr_primitives::{
 	ApplyResult, transaction_validity::TransactionValidity, generic, create_runtime_str,
 	impl_opaque_keys, AnySignature
 };
-use sr_primitives::traits::{NumberFor, BlakeTwo256, Block as BlockT, DigestFor, StaticLookup, Verify, ConvertInto, SaturatedConversion};
+use sr_primitives::traits::{NumberFor, BlakeTwo256, Block as BlockT, DigestFor, StaticLookup,
+							Verify, ConvertInto, SaturatedConversion};
 use sr_primitives::weights::Weight;
 use babe::{AuthorityId as BabeId};
 use grandpa::{AuthorityId as GrandpaId, AuthorityWeight as GrandpaWeight};
