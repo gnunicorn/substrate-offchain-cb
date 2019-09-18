@@ -202,7 +202,7 @@ pub mod offchaincb_crypto {
 type OffchainCbAccount = offchaincb_crypto::Public;
 type SubmitTransaction = TransactionSubmitter<OffchainCbAccount, Runtime, UncheckedExtrinsic>;
 
-/// Now we configure our Trait usng the previously defined primitives
+/// Now we configure our Trait using the previously defined primitives
 impl offchaincb::Trait for Runtime {
 	type Call = Call;
 	type Event = Event;
