@@ -13,10 +13,10 @@ scripts:
 
 matrix:
   include:
-    - name: Windows 32bit
-      rust: stable-i686-pc-windows-msvc
-      os: windows
-      before_deploy: 7z a target/$PACKAGE-$TRAVIS_TAG-Windows-32bit.zip ./target/release/$PACKAGE.exe
+    # - name: Windows 32bit
+    #   rust: stable-i686-pc-windows-msvc
+    #   os: windows
+    #   before_deploy: 7z a target/$PACKAGE-$TRAVIS_TAG-Windows-32bit.zip ./target/release/$PACKAGE.exe
     - name: Windows 64bit
       os: windows
       before_deploy: 7z a target/$PACKAGE-$TRAVIS_TAG-Windows-64bit.zip ./target/release/$PACKAGE.exe
@@ -49,3 +49,8 @@ deploy:
       condition: "!$TRAVIS_OS_NAME==linux"
       repo: gnunicorn/substrate-offchain-cb
       tags: true
+
+notifications:
+  email:
+    on_success: never
+    on_failure: never
