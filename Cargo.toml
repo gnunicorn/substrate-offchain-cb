@@ -1,7 +1,7 @@
 [package]
 name = "offchain-cb"
 version = "2.0.0"
-authors = ["Benjamin Kampmann"]
+authors = ["Benjamin Kampmann <ben@gnunicorn.org>"]
 build = "build.rs"
 edition = "2018"
 
