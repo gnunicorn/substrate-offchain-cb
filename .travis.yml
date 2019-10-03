@@ -1,21 +1,51 @@
 language: rust
 rust: stable
 cache: cargo
-os:
-- windows
-- linux
-- osx
+env:
+  PACKAGE=offchain-cb
+
 before_script:
 - "./scripts/init.sh"
 scripts:
 - cargo build --release
 - cargo test
+
+
+matrix:
+  include:
+    - name: Windows 32bit
+      rust: stable-i686-pc-windows-msvc
+      os: windows
+      before_deploy: 7z a target/$PACKAGE-$TRAVIS_TAG-Windows-32bit.zip ./target/release/$PACKAGE.exe
+    - name: Windows 64bit
+      os: windows
+      before_deploy: 7z a target/$PACKAGE-$TRAVIS_TAG-Windows-64bit.zip ./target/release/$PACKAGE.exe
+    - name: Linux
+      os: linux
+      before_deploy: tar czvf target/$PACKAGE-$TRAVIS_TAG-Linux.tar.gz ./target/release/$PACKAGE
+    - name: macOS X
+      os: osx
+      before_deploy: zip -j -r target/$PACKAGE-$TRAVIS_TAG-macOS.zip ./target/release/$PACKAGE
+
 deploy:
-  provider: releases
-  api_key:
-    secure: g14aWxTYyaWhg0JZy1lfZMvQPZPiwFEBnXlaidjvCdfSm6mSJtrBV1HlWs6Eatsf/GB2RgXIDEBmXA9nHXout6Ule6Ak+8UnsC7LBfxuF+X9CpvzDDAGUr989Ekckf2jVIMlu0XaFZ5YdtJ7eyOSGlsuXn9oSm8m5nf5tLhqBFXceoTzHF/bWwzNKrzBkVWw6QmtXD+Mhjewu/YPhy7ujZW0+2LCR/rrqezUsZIAlB6DH2yE2gBOdXriqUJ8LRTKLvxYZdSFA873eFxSnZ7nnJlCqU1tH8AapAYk60YZseUT5f4vTYLxD3G4ItRuPdnC6Mnor0s3nP2A7/rR6v11ZnCQsqSiElGLZ1Iwq56RW/B5y1d+MdlqkczFSsEq81g5B95HJ5zWLClT1WBf+weLyU+TffES/0rtwWEwx/XcAyUWfMbzZqMVu2FTHhNv2sNhT6brMFZ9w57C3uEHed+hU/dwdS0B9jihwt6tnr/v+n6HsfXODsCS5aPZ6CiD3U7RdWErv6jxjCn2feJivGHV8TSo+Uo1kxw4Srfu0/iYnB6PsCAghKWDA7lF2v1YVE+B5ZMadH43XTeTJzF0D6ioqKaNtcsAE0eKhBr59qKqG1hEylMrHFaCdS74D+dz3mQlvMYLAyanEl42yB5fS6gG06DLpC0lXBsGEv6SM2y/APM=
-  file:
-    - target/release/wbuild/offchain-cb-runtime/offchain_cb_runtime.compact.wasm
-    - target/release/offchain-cb
-  on:
-    repo: gnunicorn/substrate-offchain-cb
+  - provider: releases
+    draft: true
+    api_key:
+      secure: g14aWxTYyaWhg0JZy1lfZMvQPZPiwFEBnXlaidjvCdfSm6mSJtrBV1HlWs6Eatsf/GB2RgXIDEBmXA9nHXout6Ule6Ak+8UnsC7LBfxuF+X9CpvzDDAGUr989Ekckf2jVIMlu0XaFZ5YdtJ7eyOSGlsuXn9oSm8m5nf5tLhqBFXceoTzHF/bWwzNKrzBkVWw6QmtXD+Mhjewu/YPhy7ujZW0+2LCR/rrqezUsZIAlB6DH2yE2gBOdXriqUJ8LRTKLvxYZdSFA873eFxSnZ7nnJlCqU1tH8AapAYk60YZseUT5f4vTYLxD3G4ItRuPdnC6Mnor0s3nP2A7/rR6v11ZnCQsqSiElGLZ1Iwq56RW/B5y1d+MdlqkczFSsEq81g5B95HJ5zWLClT1WBf+weLyU+TffES/0rtwWEwx/XcAyUWfMbzZqMVu2FTHhNv2sNhT6brMFZ9w57C3uEHed+hU/dwdS0B9jihwt6tnr/v+n6HsfXODsCS5aPZ6CiD3U7RdWErv6jxjCn2feJivGHV8TSo+Uo1kxw4Srfu0/iYnB6PsCAghKWDA7lF2v1YVE+B5ZMadH43XTeTJzF0D6ioqKaNtcsAE0eKhBr59qKqG1hEylMrHFaCdS74D+dz3mQlvMYLAyanEl42yB5fS6gG06DLpC0lXBsGEv6SM2y/APM=
+    file:
+      - target/release/wbuild/offchain-cb-runtime/offchain_cb_runtime.compact.wasm
+      - target/release/$PACKAGE-$TRAVIS_TAG-Linux.tar.gz
+    on:
+      condition: "$TRAVIS_OS_NAME=linux"
+      repo: gnunicorn/substrate-offchain-cb
+      tags: true
+  - provider: releases
+    draft: true
+    api_key:
+      secure: g14aWxTYyaWhg0JZy1lfZMvQPZPiwFEBnXlaidjvCdfSm6mSJtrBV1HlWs6Eatsf/GB2RgXIDEBmXA9nHXout6Ule6Ak+8UnsC7LBfxuF+X9CpvzDDAGUr989Ekckf2jVIMlu0XaFZ5YdtJ7eyOSGlsuXn9oSm8m5nf5tLhqBFXceoTzHF/bWwzNKrzBkVWw6QmtXD+Mhjewu/YPhy7ujZW0+2LCR/rrqezUsZIAlB6DH2yE2gBOdXriqUJ8LRTKLvxYZdSFA873eFxSnZ7nnJlCqU1tH8AapAYk60YZseUT5f4vTYLxD3G4ItRuPdnC6Mnor0s3nP2A7/rR6v11ZnCQsqSiElGLZ1Iwq56RW/B5y1d+MdlqkczFSsEq81g5B95HJ5zWLClT1WBf+weLyU+TffES/0rtwWEwx/XcAyUWfMbzZqMVu2FTHhNv2sNhT6brMFZ9w57C3uEHed+hU/dwdS0B9jihwt6tnr/v+n6HsfXODsCS5aPZ6CiD3U7RdWErv6jxjCn2feJivGHV8TSo+Uo1kxw4Srfu0/iYnB6PsCAghKWDA7lF2v1YVE+B5ZMadH43XTeTJzF0D6ioqKaNtcsAE0eKhBr59qKqG1hEylMrHFaCdS74D+dz3mQlvMYLAyanEl42yB5fS6gG06DLpC0lXBsGEv6SM2y/APM=
+    file:
+      - target/release/*.zip
+    on:
+      condition: "!$TRAVIS_OS_NAME==linux"
+      repo: gnunicorn/substrate-offchain-cb
+      tags: true
