@@ -5,31 +5,31 @@ authors = ["Benjamin Kampmann"]
 edition = "2018"
 
 [dependencies]
-app-crypto = { package = "substrate-application-crypto", path = "../../substrate/core/application-crypto", default-features = false }
+app-crypto = { package = "substrate-application-crypto", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default-features = false }
 serde = { version = "1.0", optional = true, features = ["derive"] }
 safe-mix = { version = "1.0", default-features = false }
-codec = { package = "parity-scale-codec", version = "1.0.0", default-features = false, features = ["derive"] }
-rstd = { package = "sr-std", path = "../../substrate/core/sr-std", default_features = false }
-runtime-io = { package = "sr-io", path = "../../substrate/core/sr-io", default_features = false }
-version = { package = "sr-version", path = "../../substrate/core/sr-version", default_features = false }
-support = { package = "srml-support", path = "../../substrate/srml/support", default_features = false }
-primitives = { package = "substrate-primitives", path = "../../substrate/core/primitives", default_features = false }
-substrate-session = { path = "../../substrate/core/session", default-features = false }
-balances = { package = "srml-balances", path = "../../substrate/srml/balances", default_features = false }
-babe = { package = "srml-babe", path = "../../substrate/srml/babe", default-features = false }
-babe-primitives = { package = "substrate-consensus-babe-primitives", path = "../../substrate/core/consensus/babe/primitives", default-features = false }
-executive = { package = "srml-executive", path = "../../substrate/srml/executive", default_features = false }
-indices = { package = "srml-indices", path = "../../substrate/srml/indices", default_features = false }
-grandpa = { package = "srml-grandpa", path = "../../substrate/srml/grandpa", default-features = false }
-system = { package = "srml-system", path = "../../substrate/srml/system", default_features = false }
-timestamp = { package = "srml-timestamp", path = "../../substrate/srml/timestamp", default_features = false }
-sudo = { package = "srml-sudo", path = "../../substrate/srml/sudo", default_features = false }
-sr-primitives = { path = "../../substrate/core/sr-primitives", default_features = false }
-client = { package = "substrate-client", path = "../../substrate/core/client", default_features = false }
-offchain-primitives = { package = "substrate-offchain-primitives", path = "../../substrate/core/offchain/primitives", default-features = false }
+codec = { package = "parity-scale-codec", version = "1.0.6", default-features = false, features = ["derive"] }
+rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+runtime-io = { package = "sr-io", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+version = { package = "sr-version", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+support = { package = "srml-support", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+substrate-session = { git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default-features = false }
+balances = { package = "srml-balances", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+babe = { package = "srml-babe", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default-features = false }
+babe-primitives = { package = "substrate-consensus-babe-primitives", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default-features = false }
+executive = { package = "srml-executive", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+indices = { package = "srml-indices", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+grandpa = { package = "srml-grandpa", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default-features = false }
+system = { package = "srml-system", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+timestamp = { package = "srml-timestamp", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+sudo = { package = "srml-sudo", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+sr-primitives = { git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+client = { package = "substrate-client", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default_features = false }
+offchain-primitives = { package = "substrate-offchain-primitives", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78", default-features = false }
 
 [build-dependencies]
-wasm-builder-runner = { path = "../../substrate/core/utils/wasm-builder-runner", package = "substrate-wasm-builder-runner", version = "1.0.2" }
+wasm-builder-runner = { package = "substrate-wasm-builder-runner", git = "https://github.com/paritytech/substrate/", rev = "223554e547fe802d566815cacf3acf6ce0e7fb78" }
 
 [features]
 default = ["std"]
