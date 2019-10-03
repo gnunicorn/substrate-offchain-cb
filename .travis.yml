@@ -6,10 +6,9 @@ env:
 
 before_script:
 - "./scripts/init.sh"
-scripts:
-- cargo build --release
-- cargo test
-
+script:
+- cargo test --verbose
+- cargo build --release --verbose
 
 matrix:
   include:
