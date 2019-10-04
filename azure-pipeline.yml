@@ -117,7 +117,7 @@ stages:
       displayName: Stage wasm runtime
       inputs:
         sourceFolder: '$(Build.SourcesDirectory)/target/release/wbuild/$(crate_name)-runtime/'
-        contents: *.compact.wasm
+        contents: '*.compact.wasm'
         targetFolder: '$(Build.BinariesDirectory)/'
     - task: CopyFiles@2
       displayName: Stage assets
