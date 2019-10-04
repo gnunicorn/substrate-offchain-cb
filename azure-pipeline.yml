@@ -25,10 +25,6 @@ variables:
   rust_style: stable
 
 stages:
- - template: azure/stages.yml
-   parameters:
-     setup:
-       - script: ./scripts/init.sh
 - stage: test
   displayName: Test
   jobs:
@@ -71,6 +67,10 @@ stages:
     - template: azure/install-rust.yml@templates
       parameters:
         rust: $(channel)
+    - template: azure/stages.yml
+      parameters:
+        setup:
+          - script: ./scripts/init.sh
     - script: cargo test --verbose
       displayName: Testing
 - stage: release
@@ -96,9 +96,12 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: azure/install-rust.yml@templates
+    - template: azure/stages.yml
+      parameters:
+        setup:
+          - script: ./scripts/init.sh
     - script: |
-        cargo rustc --target $(TARGET) --release --bin $(CRATE_NAME) -- -C lto
+        cargo build --release --bin $(CRATE_NAME) -- -C lto
       displayName: Build
     - task: CopyFiles@2
       displayName: Stage assets
