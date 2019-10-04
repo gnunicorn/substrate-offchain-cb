@@ -95,12 +95,11 @@ stages:
       vmImage: $(imageName)
     steps:
     - template: azure/install-rust.yml@templates
-      parameters:
-        setup:
-          - script: ./scripts/init.sh
+    - bash: ./scripts/init.sh
+      displayName: Substrate setup
     - script: |
         cargo build --release --bin $(CRATE_NAME) -- -C lto
-      displayName: Build
+      displayName: Build Release Assets
     - task: CopyFiles@2
       displayName: Stage assets
       condition: ne( variables['Agent.OS'], 'Windows_NT' )
