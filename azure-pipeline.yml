@@ -99,6 +99,7 @@ stages:
           crate_name: offchain-cb
     pool:
       vmImage: $(imageName)
+    timeoutInMinutes: 120
     steps:
     - template: azure/install-rust.yml@templates
     - script: |
@@ -113,24 +114,31 @@ stages:
         cargo build --release --bin $(CRATE_NAME)
       displayName: Build Release Assets
     - task: CopyFiles@2
+      displayName: Stage wasm runtime
+      inputs:
+        sourceFolder: '$(Build.SourcesDirectory)/target/release/wbuild/$(crate_name)-runtime/'
+        contents: *.compact.wasm
+        targetFolder: '$(Build.BinariesDirectory)/'
+    - task: CopyFiles@2
       displayName: Stage assets
       condition: ne( variables['Agent.OS'], 'Windows_NT' )
       inputs:
-        sourceFolder: '$(Build.SourcesDirectory)/target/$(TARGET)/release'
+        sourceFolder: '$(Build.SourcesDirectory)/target/release'
         contents: $(crate_name)
         targetFolder: '$(Build.BinariesDirectory)/'
     - task: CopyFiles@2
       displayName: Stage assets on Windows
       condition: eq( variables['Agent.OS'], 'Windows_NT' )
       inputs:
-        sourceFolder: '$(Build.SourcesDirectory)/target/$(TARGET)/release'
+        sourceFolder: '$(Build.SourcesDirectory)/target/release'
         contents: $(crate_name).exe
         targetFolder: '$(Build.BinariesDirectory)/'
     - task: ArchiveFiles@2
       displayName: Tarball assets
       condition: ne( variables['Agent.OS'], 'Windows_NT' )
       inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)/$(crate_name)'
+        rootFolderOrFile: '$(Build.BinariesDirectory)/'
+        includeRootFolder: false
         archiveType: 'tar'
         tarCompression: 'gz'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(crate_name)-$(Build.SourceBranchName)-$(TARGET).tar.gz'
@@ -151,7 +159,8 @@ stages:
       displayName: Zip assets
       condition: eq( variables['Agent.OS'], 'Windows_NT' )
       inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)/$(crate_name).exe'
+        rootFolderOrFile: '$(Build.BinariesDirectory)/'
+        includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(crate_name)-$(Build.SourceBranchName)-$(TARGET).zip'
     - task: GithubRelease@0
