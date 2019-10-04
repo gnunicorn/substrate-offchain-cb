@@ -36,21 +36,21 @@ stages:
           imageName: ${{ variables.windows_vm }}
           target: 'x86_64-pc-windows-msvc'
           channel: stable
-        windows_beta:
-          imageName: ${{ variables.windows_vm }}
-          channel: beta
-        windows_nightly:
-          imageName: ${{ variables.windows_vm }}
-          channel: nightly
+        # windows_beta:
+        #   imageName: ${{ variables.windows_vm }}
+        #   channel: beta
+        # windows_nightly:
+        #   imageName: ${{ variables.windows_vm }}
+        #   channel: nightly
         mac:
           imageName: ${{ variables.mac_vm }}
           channel: stable
-        mac_beta:
-          imageName: ${{ variables.mac_vm }}
-          channel: beta
-        mac_nightly:
-          imageName: ${{ variables.mac_vm }}
-          channel: nightly
+        # mac_beta:
+        #   imageName: ${{ variables.mac_vm }}
+        #   channel: beta
+        # mac_nightly:
+        #   imageName: ${{ variables.mac_vm }}
+        #   channel: nightly
         linux:
           imageName: ${{ variables.linux_vm }}
           channel: stable
@@ -67,6 +67,12 @@ stages:
     - template: azure/install-rust.yml@templates
       parameters:
         rust: $(channel)
+    - script: |
+        choco install llvm
+        if %ERRORLEVEL% NEQ 0 goto :eof
+        echo ##vso[task.setvariable variable=PATH]%PATH%;C:\Program Files\LLVM\bin
+      displayName: 'Install llvm'
+      condition: eq( variables['Agent.OS'], 'Windows_NT' )
     - bash: ./scripts/init.sh
       displayName: Substrate setup
     - script: cargo test --verbose
@@ -95,6 +101,12 @@ stages:
       vmImage: $(imageName)
     steps:
     - template: azure/install-rust.yml@templates
+    - script: |
+        choco install llvm
+        if %ERRORLEVEL% NEQ 0 goto :eof
+        echo ##vso[task.setvariable variable=PATH]%PATH%;C:\Program Files\LLVM\bin
+      displayName: 'Install llvm'
+      condition: eq( variables['Agent.OS'], 'Windows_NT' )
     - bash: ./scripts/init.sh
       displayName: Substrate setup
     - script: |
