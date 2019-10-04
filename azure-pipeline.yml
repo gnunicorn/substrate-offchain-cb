@@ -67,7 +67,7 @@ stages:
     - template: azure/install-rust.yml@templates
       parameters:
         rust: $(channel)
-    - template: azure/stages.yml
+    - template: azure/stages.yml@templates
       parameters:
         setup:
           - script: ./scripts/init.sh
@@ -96,7 +96,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: azure/stages.yml
+    - template: azure/stages.yml@templates
       parameters:
         setup:
           - script: ./scripts/init.sh
