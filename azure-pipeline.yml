@@ -98,7 +98,7 @@ stages:
     - bash: ./scripts/init.sh
       displayName: Substrate setup
     - script: |
-        cargo build --release --bin $(CRATE_NAME) -- -C lto
+        cargo build --release --bin $(CRATE_NAME)
       displayName: Build Release Assets
     - task: CopyFiles@2
       displayName: Stage assets
