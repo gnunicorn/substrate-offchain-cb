@@ -6,6 +6,8 @@ env:
 
 before_script:
 - "./scripts/init.sh"
+script:
+- cargo test --release --verbose
 
 matrix:
   include:
@@ -16,17 +18,14 @@ matrix:
     - name: Windows 64bit
       os: windows
       before_deploy:
-        - cargo build --release
         - 7z a target/$PACKAGE-$TRAVIS_TAG-Windows-64bit.zip ./target/release/$PACKAGE.exe
     - name: Linux
       os: linux
       before_deploy:
-        - cargo build --release
         - tar czvf target/$PACKAGE-$TRAVIS_TAG-Linux.tar.gz ./target/release/$PACKAGE
     - name: macOS X
       os: osx
       before_deploy:
-        - cargo build --release
         - zip -j -r target/$PACKAGE-$TRAVIS_TAG-macOS.zip ./target/release/$PACKAGE
 
 deploy:
