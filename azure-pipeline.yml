@@ -2,7 +2,7 @@ stages:
 - template: azure/stages.yml@templates
   parameters:
     setup:
-      - ./scripts/init.sh
+      - script: ./scripts/init.sh
 
 resources:
   repositories:
