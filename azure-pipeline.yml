@@ -67,7 +67,7 @@ stages:
     - template: azure/install-rust.yml@templates
       parameters:
         rust: $(channel)
-    - script: ./scripts/init.sh
+    - bash: ./scripts/init.sh
       displayName: Substrate setup
     - script: cargo test --verbose
       displayName: Testing
