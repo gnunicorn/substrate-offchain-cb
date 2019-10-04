@@ -164,8 +164,8 @@ resources:
     - repository: templates
       type: github
       name: crate-ci/azure-pipelines
-      endpoint: crate-ci
+      endpoint: gnunicorn
     - repository: gh-install
       type: github
       name: crate-ci/gh-install
-      endpoint: crate-ci
+      endpoint: gnunicorn
