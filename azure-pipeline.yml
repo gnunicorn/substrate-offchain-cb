@@ -94,7 +94,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: azure/stages.yml
+    - template: azure/install-rust.yml@templates
       parameters:
         setup:
           - script: ./scripts/init.sh
