@@ -67,8 +67,8 @@ stages:
     - template: azure/install-rust.yml@templates
       parameters:
         rust: $(channel)
-        setup:
-          - script: ./scripts/init.sh
+    - script: ./scripts/init.sh
+      displayName: Substrate setup
     - script: cargo test --verbose
       displayName: Testing
 - stage: release
@@ -82,15 +82,15 @@ stages:
         windows:
           imageName: ${{ variables.windows_vm }}
           target: 'x86_64-pc-windows-msvc'
-          crate_name: occhain-cb
+          crate_name: offchain-cb
         mac:
           imageName: ${{ variables.mac_vm }}
           target: 'x86_64-apple-darwin'
-          crate_name: occhain-cb
+          crate_name: offchain-cb
         linux:
           imageName: ${{ variables.linux_vm }}
           target: 'x86_64-unknown-linux-gnu'
-          crate_name: occhain-cb
+          crate_name: offchain-cb
     pool:
       vmImage: $(imageName)
     steps:
