@@ -1,5 +1,5 @@
 stages:
- - template: azure/stages.yml@templates
+- template: azure/stages.yml@templates
     parameters:
      setup:
        - ./scripts/init.sh
