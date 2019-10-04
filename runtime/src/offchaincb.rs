@@ -4,19 +4,18 @@
 //! interact with an offchain worker asynchronously.
 //!
 //! This example plays simple ping-pong with authenticated off-chain workers:
-//! Once a signed transaction to `ping` is submitted, the runtime emits the `Ping`
-//! event. After every block the offchain worker is triggered. If it sees the `Ping`
-//! event in the current block, it reacts by sending a signed transaction to call
+//! Once a signed transaction to `ping` is submitted, the runtime store `Ping` request.
+//! After every block the offchain worker is triggered. If it sees a `Ping` request
+//! in the current block, it reacts by sending a signed transaction to call
 //! `pong`.  When `pong` is called, it emits an `Ack` event so it easy to track
-//! with existing UIs whether the Ping-Pong-Ack happened. The offchain worker does
-//! not react on `Ack`.
+//! with existing UIs whether the Ping-Pong-Ack happened.
 //!
 //! However, because the `pong` contains trusted information (the `nonce`) the runtime
 //! can't verify by itself - the key reason why we have the offchain worker in the
-//! first place, we can't allow just anyone to call `pong`. Instead the runtime has a
+//! first place - we can't allow just anyone to call `pong`. Instead the runtime has a
 //! local list of `authorities`-keys that allowed to evoke `pong`. In this simple example
 //! this list can only be extended via a root call (e.g. `sudo`). In practice more
-//! complex management models and session based key rotations should be conidered, but 
+//! complex management models and session based key rotations should be considered, but 
 //! this is out of the scope of this example
 
 // Ensure we're `no_std` when compiling for Wasm. Otherwise our `Vec` and operations
@@ -29,23 +28,20 @@ use app_crypto::RuntimeAppPublic;
 use support::{decl_module, decl_event, decl_storage, StorageValue, dispatch::Result};
 use system::{ensure_signed, ensure_root};
 use system::offchain::SubmitSignedTransaction;
-use core::convert::TryInto;
+use codec::{Encode, Decode};
 
 /// Our local KeyType.
 ///
-/// For security reasons the offchain worker doesn't have direct access to tohe keys
-/// but only to app-specific subkeys, which are defined and grouped  by their KeyTypeId.
+/// For security reasons the offchain worker doesn't have direct access to the keys
+/// but only to app-specific subkeys, which are defined and grouped by their `KeyTypeId`.
 /// We define it here as `ofcb` (for `offchain callback`). Yours should be specific to
 /// the module you are actually building.
 pub const KEY_TYPE: app_crypto::KeyTypeId = app_crypto::KeyTypeId(*b"ofcb");
 
 /// The module's main configuration trait.
 pub trait Trait: system::Trait  {
-	/// The regular events type.
-	/// Extended by a few `TryInto` and other traits so we can match this back
-	/// with our localised event from within the offchain worker after it was emitted.
-	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>
-				+ From<<Self as system::Trait>::Event> + TryInto<Event<Self>>;
+	/// The regular events type, we use to emit the `Ack`
+	type Event:From<Event<Self>> + Into<<Self as system::Trait>::Event>;
 
 	/// A dispatchable call type. We need to define it for the offchain worker to 
 	/// reference the `pong` function it wants to call.
@@ -58,23 +54,30 @@ pub trait Trait: system::Trait  {
 	type KeyType: RuntimeAppPublic + From<Self::AccountId> + Into<Self::AccountId> + Clone;
 }
 
+/// The type of requests we can send to the offchain worker
+#[derive(Encode, Decode)]
+pub enum OffchainRequest<T: system::Trait> {
+	/// If an authorised offchain worker sees this ping, it shall respond with a `pong` call
+	Ping(u8,  <T as system::Trait>::AccountId)
+}
 
-// Then we need some events. The runtime and offchain worker can't talk to one another directly,
-// but the runtime can emit events that the offchain worker then react upon. In
+// We use the regular Event type to sent the final ack for the nonce
 decl_event!(
 	pub enum Event<T> where AccountId = <T as system::Trait>::AccountId {
-		/// Emitted when someone asks us to ping
-		Ping(u8, AccountId),
 		/// When we received a Pong, we also Ack it.
 		Ack(u8, AccountId),
 	}
 );
 
 
-// In this example, we only use the store to keep the list of currently
-// authorised keys
+// We use storage in two important ways here:
+// 1. we have a local list of `OcRequests`, which are cleared at the beginning
+//    and then collected throughout a block
+// 2. we store the list of authorities, from whom we accept `pong` calls.
 decl_storage! {
 	trait Store for Module<T: Trait> as OffchainCb {
+		/// Requests made within this block execution
+		OcRequests: Vec<OffchainRequest<T>>;
 		/// The current set of keys that may submit pongs
 		Authorities get(authorities): Vec<T::AccountId>;
 	}
@@ -87,13 +90,22 @@ decl_module! {
 		/// Initializing events
 		fn deposit_event() = default;
 
-		/// The entry point function: emitting a `Ping` event with the given `nonce`.
+		/// Clean the state on initialisation of a block
+		fn on_initialize(_now: T::BlockNumber) {
+			// At the beginning of each block execution, system triggers all
+			// `on_initialize` functions, which allows us to set up some temprorary
+			// state or - like in this case - clean up other states
+			<Self as Store>::OcRequests::kill();
+		}
+
+
+		/// The entry point function: storing a `Ping` offchain request with the given `nonce`.
 		pub fn ping(origin, nonce: u8) -> Result {
-			// It first ensures the function was signed, then it emits the `Ping` event
+			// It first ensures the function was signed, then it store the `Ping` request
 			// with our nonce and author. Finally it results with `Ok`.
 			let who = ensure_signed(origin)?;
-
-			Self::deposit_event(RawEvent::Ping(nonce, who));
+			
+			<Self as Store>::OcRequests::mutate(|v| v.push(OffchainRequest::Ping(nonce, who)));
 			Ok(())
 		}
 
@@ -101,7 +113,7 @@ decl_module! {
 		pub fn pong(origin, nonce: u8) -> Result {
 			// We don't allow anyone to `pong` but only those authorised in the `authorities`
 			// set at this point. Therefore after ensuring this is singed, we check whether
-			// that given author is allowed to `pong` is. If so, we emit the `Ack` signal,
+			// that given author is allowed to `pong` is. If so, we emit the `Ack` event,
 			// otherwise we've just consumed their fee.
 			let author = ensure_signed(origin)?;
 
@@ -143,25 +155,31 @@ impl<T: Trait> Module<T> {
 
 	/// The main entry point, called with account we are supposed to sign with
 	fn offchain(key: &T::AccountId) {
-		// This iterates through all events emitted by the current block and
-		// attempts to convert them into a local `event` of this module to find
-		// the `Ping`s emitted.
-		// Once a ping is found, we inform the user via a command line print
-		// and emit the pong and respond by calling `pong` as a transaction
+		// Let's iterat through the locally stored requests and react to them.
+		// At the moment, only knows of one request to respond to: `ping`.
+		// Once a ping is found, we respond by calling `pong` as a transaction
 		// signed with the given key.
 		// This would be the place, where a regular offchain worker would go off
 		// and do its actual thing before reponding async at a later point in time.
 		// 
 		// Note, that even though this is run directly on the same block, as we are
 		// creating a new transaction, this will only react _in the following_ block.
-		for e in <system::Module<T>>::events() {
-			let evt: <T as Trait>::Event = e.event.into();
-			if let Ok(Event::<T>::Ping(nonce, _who)) = evt.try_into() {
-				runtime_io::print_utf8(b"Received ping, sending pong");
-				let call = Call::pong(nonce);
-				let _ = T::SubmitTransaction::sign_and_submit(call, key.clone().into());
+		for e in <Self as Store>::OcRequests::get() {
+			match e {
+				OffchainRequest::Ping(nonce, _who) => {
+					Self::respond(key, nonce)
+				}
+				// there would be potential other calls
 			}
 		}
+	}
+
+	/// Respondong to as the given account to a given nonce by calling `pong` as a
+	/// newly signed and submitted trasnaction
+	fn respond(key: &T::AccountId, nonce: u8) {
+		runtime_io::print_utf8(b"Received ping, sending pong");
+		let call = Call::pong(nonce);
+		let _ = T::SubmitTransaction::sign_and_submit(call, key.clone().into());
 	}
 
 	/// Helper that confirms whether the given `AccountId` can sign `pong` transactions
