@@ -1,4 +1,4 @@
-//! # Offchain Worker Callback Example 
+//! # Offchain Worker Callback Example
 //!
 //! This is a minimal example module to show case how the runtime can and should
 //! interact with an offchain worker asynchronously.
@@ -15,7 +15,7 @@
 //! first place - we can't allow just anyone to call `pong`. Instead the runtime has a
 //! local list of `authorities`-keys that allowed to evoke `pong`. In this simple example
 //! this list can only be extended via a root call (e.g. `sudo`). In practice more
-//! complex management models and session based key rotations should be considered, but 
+//! complex management models and session based key rotations should be considered, but
 //! this is out of the scope of this example
 
 // Ensure we're `no_std` when compiling for Wasm. Otherwise our `Vec` and operations
@@ -43,7 +43,7 @@ pub trait Trait: system::Trait  {
 	/// The regular events type, we use to emit the `Ack`
 	type Event:From<Event<Self>> + Into<<Self as system::Trait>::Event>;
 
-	/// A dispatchable call type. We need to define it for the offchain worker to 
+	/// A dispatchable call type. We need to define it for the offchain worker to
 	/// reference the `pong` function it wants to call.
 	type Call: From<Call<Self>>;
 
@@ -104,7 +104,7 @@ decl_module! {
 			// It first ensures the function was signed, then it store the `Ping` request
 			// with our nonce and author. Finally it results with `Ok`.
 			let who = ensure_signed(origin)?;
-			
+
 			<Self as Store>::OcRequests::mutate(|v| v.push(OffchainRequest::Ping(nonce, who)));
 			Ok(())
 		}
@@ -112,7 +112,7 @@ decl_module! {
 		/// Called from the offchain worker to respond to a ping
 		pub fn pong(origin, nonce: u8) -> Result {
 			// We don't allow anyone to `pong` but only those authorised in the `authorities`
-			// set at this point. Therefore after ensuring this is singed, we check whether
+			// set at this point. Therefore after ensuring this is signed, we check whether
 			// that given author is allowed to `pong` is. If so, we emit the `Ack` event,
 			// otherwise we've just consumed their fee.
 			let author = ensure_signed(origin)?;
@@ -150,18 +150,18 @@ decl_module! {
 }
 
 
-// We've moved the  helper functions outside of the main decleration for briefety.
+// We've moved the helper functions outside of the main decleration for brevity.
 impl<T: Trait> Module<T> {
 
 	/// The main entry point, called with account we are supposed to sign with
 	fn offchain(key: &T::AccountId) {
-		// Let's iterat through the locally stored requests and react to them.
+		// Let's iterate through the locally stored requests and react to them.
 		// At the moment, only knows of one request to respond to: `ping`.
 		// Once a ping is found, we respond by calling `pong` as a transaction
 		// signed with the given key.
 		// This would be the place, where a regular offchain worker would go off
 		// and do its actual thing before reponding async at a later point in time.
-		// 
+		//
 		// Note, that even though this is run directly on the same block, as we are
 		// creating a new transaction, this will only react _in the following_ block.
 		for e in <Self as Store>::OcRequests::get() {
@@ -174,7 +174,7 @@ impl<T: Trait> Module<T> {
 		}
 	}
 
-	/// Respondong to as the given account to a given nonce by calling `pong` as a
+	/// Responding to as the given account to a given nonce by calling `pong` as a
 	/// newly signed and submitted trasnaction
 	fn respond(key: &T::AccountId, nonce: u8) {
 		runtime_io::print_utf8(b"Received ping, sending pong");
