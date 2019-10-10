@@ -207,6 +207,11 @@ impl<T: Trait> Module<T> {
 	}
 }
 
+/// This module contains all the testing boilerplate, and the unit test functions. We will not go
+/// into the details of the setup needed for tests. For more information about test setup, visit the
+/// [substrate developer hub](https://substrate.dev). Namely, the substrate collectables workshop
+/// has a dedicated
+/// [chapter](https://substrate.dev/substrate-collectables-workshop/#/5/introduction) on tests.
 #[cfg(test)]
 mod tests {
 	use codec::Decode;
@@ -224,15 +229,22 @@ mod tests {
 	use system;
 	use crate::offchaincb as offchaincb;
 
+	// Define some type aliases. We use the simplest form of anything which is not relevant for
+	// simplicity, e.g. account ids are just numbers and signed extensions are empty (`()`).
 	type AccountId = u64;
 	type AccountIndex = u64;
 	type Extrinsic = TestXt<Call, ()>;
+	// Consequently, we use the `UIntAuthorityId` as a mocked identifier for authorities.
 	type SubmitTransaction = system::offchain::TransactionSubmitter<UintAuthorityId, Call, Extrinsic>;
+	type NodeBlock = generic::Block<Header, Extrinsic>;
 
 	// TODO: implement this for runtime or call?
 	impl system::offchain::CreateTransaction<TestRuntime, Extrinsic> for Call {
 		type Signature = u64;
 
+		// Pay close attention to how this implementation --drastically-- differs from the real one
+		// in the top level runtime aggregator file, and how it creates a mock signature (which is
+		// actually the account id itself).
 		fn create_transaction<F: system::offchain::Signer<AccountId, Self::Signature>>(
 			call: Call,
 			account: AccountId,
@@ -243,6 +255,7 @@ mod tests {
 		}
 	}
 
+	// Define the required constants for system module,
 	parameter_types! {
 		pub const BlockHashCount: u64 = 250;
 		pub const MaximumBlockWeight: u32 = 1024;
@@ -250,6 +263,7 @@ mod tests {
 		pub const AvailableBlockRatio: Perbill = Perbill::one();
 	}
 
+	// and add it to our test runtime.
 	impl system::Trait for TestRuntime {
 		type Origin = Origin;
 		type Index = AccountIndex;
@@ -276,7 +290,7 @@ mod tests {
 		type KeyType = UintAuthorityId;
 	}
 
-	pub type NodeBlock = generic::Block<Header, Extrinsic>;
+	// Create the mock runtime with all the top level structures that we use: `Call`, `Event`, etc.
 	construct_runtime!(
 		pub enum TestRuntime where
 			Block = NodeBlock,
@@ -288,6 +302,12 @@ mod tests {
 		}
 	);
 
+	// Create the externalities (aka. _execution environment_/_storage_) of our test. Just note how
+	// this function accepts a parameter and writes that as the _local keys_. These keys are then
+	// matched against the `authorities` stored in the runtime storage. For now, we assume that only
+	// account 49 is an authority. Hence, in further tests, a `new_test_ext()` called with an
+	// parameter that contains `49` is analogous to running the code in a _node who is an
+	// authority_.
 	pub fn new_test_ext(local_keys: Vec<AccountId>) -> TestExternalities<Blake2Hasher> {
 		let mut t = system::GenesisConfig::default().build_storage::<TestRuntime>().unwrap();
 		// Any node that has local key `49` can submit a pong.
@@ -331,6 +351,7 @@ mod tests {
 		}
 	}
 
+	// We just want to test the initial state of the test mockup. No interaction.
 	#[test]
 	fn test_setup_works() {
 		// a normal node.
@@ -361,6 +382,7 @@ mod tests {
 		});
 	}
 
+	// Send a ping and verify that the ping struct has been stored in the `OcRequests` storage.
 	#[test]
 	fn ping_should_work() {
 		with_externalities(&mut new_test_ext(vec![1]), || {
@@ -373,28 +395,33 @@ mod tests {
 		})
 	}
 
+	// Verify that any origin can send a ping and the even is triggered regardless.
 	#[test]
 	fn anyone_can_ping() {
-		with_externalities(&mut new_test_ext(vec![1]), || {
-			// authority
-			assert_ok!(OffchainCb::ping(Origin::signed(1), 1));
-			// normal key
-			assert_ok!(OffchainCb::ping(Origin::signed(2), 4));
+		// Current node is an authority. This does not matter in this test.
+		with_externalities(&mut new_test_ext(vec![49, 10]), || {
+			// An authority (current node) can submit ping.
+			assert_ok!(OffchainCb::ping(Origin::signed(49), 1));
+			// normal key can also submit ping.
+			assert_ok!(OffchainCb::ping(Origin::signed(10), 4));
 
+			// both should be processed.
 			assert_eq!(
 				OffchainCb::oc_requests()[0],
-				offchaincb::OffchainRequest::Ping(1, 1),
+				offchaincb::OffchainRequest::Ping(1, 49),
 			);
 
 			assert_eq!(
 				OffchainCb::oc_requests()[1],
-				offchaincb::OffchainRequest::Ping(4, 2),
+				offchaincb::OffchainRequest::Ping(4, 10),
 			);
 		})
 	}
 
+	// Verify that if ping is from an authority, then an ack is processed in the next block.
 	#[test]
 	fn ping_triggers_ack() {
+		// Assume current node has key 49, hence is an authority.
 		let mut ext = new_test_ext(vec![49]);
 		let (offchain, state) = TestOffchainExt::new();
 		ext.set_offchain_externalities(offchain);
@@ -420,6 +447,7 @@ mod tests {
 
 	#[test]
 	fn only_authorities_can_pong() {
+		// Current node does not have key 49, hence is not the authority.
 		let mut ext = new_test_ext(vec![69]);
 		let (offchain, state) = TestOffchainExt::new();
 		ext.set_offchain_externalities(offchain);
