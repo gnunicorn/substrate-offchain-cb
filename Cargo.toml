@@ -1,7 +1,7 @@
 [package]
 name = "offchain-cb"
 version = "2.0.0"
-authors = ["Benjamin Kampmann"]
+authors = ["Benjamin Kampmann <ben@gnunicorn.org>"]
 build = "build.rs"
 edition = "2018"
 
@@ -19,20 +19,20 @@ exit-future = "0.1"
 parking_lot = "0.9.0"
 codec = { package = "parity-scale-codec", version = "1.0.0" }
 trie-root = "0.15.2"
-sr-io = { path = "../substrate/core/sr-io" }
-substrate-cli = { path = "../substrate/core/cli" }
-primitives = { package = "substrate-primitives", path = "../substrate/core/primitives" }
-substrate-executor = { path = "../substrate/core/executor" }
-substrate-service = { path = "../substrate/core/service" }
-inherents = { package = "substrate-inherents", path = "../substrate/core/inherents" }
-transaction-pool = { package = "substrate-transaction-pool", path = "../substrate/core/transaction-pool" }
-network = { package = "substrate-network", path = "../substrate/core/network" }
-babe = { package = "substrate-consensus-babe", path = "../substrate/core/consensus/babe" }
-babe-primitives = { package = "substrate-consensus-babe-primitives", path = "../substrate/core/consensus/babe/primitives" }
-grandpa = { package = "substrate-finality-grandpa", path = "../substrate/core/finality-grandpa" }
-grandpa-primitives = { package = "substrate-finality-grandpa-primitives", path = "../substrate/core/finality-grandpa/primitives" }
-substrate-client = {  path = "../substrate/core/client" }
-basic-authorship = { package = "substrate-basic-authorship", path = "../substrate/core/basic-authorship" }
+sr-io = { git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+substrate-cli = { git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+substrate-executor = { git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+substrate-service = { git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+inherents = { package = "substrate-inherents", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+transaction-pool = { package = "substrate-transaction-pool", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+network = { package = "substrate-network", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+babe = { package = "substrate-consensus-babe", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+babe-primitives = { package = "substrate-consensus-babe-primitives", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+grandpa = { package = "substrate-finality-grandpa", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+grandpa-primitives = { package = "substrate-finality-grandpa-primitives", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+substrate-client = {  git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+basic-authorship = { package = "substrate-basic-authorship", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
 offchain-cb-runtime = { path = "runtime" }
 
 [build-dependencies]

@@ -1,5 +1,7 @@
 # Substrate Offchain Callback Example
 
+[![Build Status](https://dev.azure.com/benkampmann/benkampmann/_apis/build/status/gnunicorn.substrate-offchain-cb%20(1)?branchName=master)](https://dev.azure.com/benkampmann/benkampmann/_build/latest?definitionId=2&branchName=master)
+
 This recipe shows how to build an offchain-worker that the runtime communicates with asynchronously by issuing events with callbacks the offchain worker responds to at a later point.
 
 

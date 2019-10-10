@@ -1,0 +1,189 @@
+trigger:
+  branches:
+    include: ['master']
+  tags:
+    include: ['v*']
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - "*.md"
+    - "docs/*"
+    - "LICENSE-*"
+schedules:
+- cron: "12 12 12 * *"
+  displayName: Monthly Build
+  branches:
+    include:
+    - master
+variables:
+  windows_vm: vs2017-win2016
+  mac_vm: macos-10.14
+  linux_vm: ubuntu-16.04
+  rust_style: stable
+
+stages:
+- stage: test
+  displayName: Test
+  jobs:
+  - job: test
+    displayName: Test
+    strategy:
+      matrix:
+        windows:
+          imageName: ${{ variables.windows_vm }}
+          target: 'x86_64-pc-windows-msvc'
+          channel: stable
+        # windows_beta:
+        #   imageName: ${{ variables.windows_vm }}
+        #   channel: beta
+        # windows_nightly:
+        #   imageName: ${{ variables.windows_vm }}
+        #   channel: nightly
+        mac:
+          imageName: ${{ variables.mac_vm }}
+          channel: stable
+        # mac_beta:
+        #   imageName: ${{ variables.mac_vm }}
+        #   channel: beta
+        # mac_nightly:
+        #   imageName: ${{ variables.mac_vm }}
+        #   channel: nightly
+        linux:
+          imageName: ${{ variables.linux_vm }}
+          channel: stable
+        linux_beta:
+          imageName: ${{ variables.linux_vm }}
+          channel: beta
+        linux_nightly:
+          imageName: ${{ variables.linux_vm }}
+          channel: nightly
+    continueOnError: ${{ eq(variables.channel, 'nightly') }}
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - template: azure/install-rust.yml@templates
+      parameters:
+        rust: $(channel)
+    - script: |
+        choco install llvm
+        if %ERRORLEVEL% NEQ 0 goto :eof
+        echo ##vso[task.setvariable variable=PATH]%PATH%;C:\Program Files\LLVM\bin
+      displayName: 'Install llvm'
+      condition: eq( variables['Agent.OS'], 'Windows_NT' )
+    - bash: ./scripts/init.sh
+      displayName: Substrate setup
+    - script: cargo test --verbose
+      displayName: Testing
+- stage: release
+  displayName: Release
+  dependsOn: test
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+  jobs:
+  - job:
+    strategy:
+      matrix:
+        windows:
+          imageName: ${{ variables.windows_vm }}
+          target: 'x86_64-pc-windows-msvc'
+          crate_name: offchain-cb
+        mac:
+          imageName: ${{ variables.mac_vm }}
+          target: 'x86_64-apple-darwin'
+          crate_name: offchain-cb
+        linux:
+          imageName: ${{ variables.linux_vm }}
+          target: 'x86_64-unknown-linux-gnu'
+          crate_name: offchain-cb
+    pool:
+      vmImage: $(imageName)
+    timeoutInMinutes: 120
+    steps:
+    - template: azure/install-rust.yml@templates
+    - script: |
+        choco install llvm
+        if %ERRORLEVEL% NEQ 0 goto :eof
+        echo ##vso[task.setvariable variable=PATH]%PATH%;C:\Program Files\LLVM\bin
+      displayName: 'Install llvm'
+      condition: eq( variables['Agent.OS'], 'Windows_NT' )
+    - bash: ./scripts/init.sh
+      displayName: Substrate setup
+    - script: |
+        cargo build --release --bin $(CRATE_NAME)
+      displayName: Build Release Assets
+    - task: CopyFiles@2
+      displayName: Stage wasm runtime
+      inputs:
+        sourceFolder: '$(Build.SourcesDirectory)/target/release/wbuild/$(crate_name)-runtime/'
+        contents: '*.compact.wasm'
+        targetFolder: '$(Build.BinariesDirectory)/'
+    - task: CopyFiles@2
+      displayName: Stage assets
+      condition: ne( variables['Agent.OS'], 'Windows_NT' )
+      inputs:
+        sourceFolder: '$(Build.SourcesDirectory)/target/release'
+        contents: $(crate_name)
+        targetFolder: '$(Build.BinariesDirectory)/'
+    - task: CopyFiles@2
+      displayName: Stage assets on Windows
+      condition: eq( variables['Agent.OS'], 'Windows_NT' )
+      inputs:
+        sourceFolder: '$(Build.SourcesDirectory)/target/release'
+        contents: $(crate_name).exe
+        targetFolder: '$(Build.BinariesDirectory)/'
+    - task: ArchiveFiles@2
+      displayName: Tarball assets
+      condition: ne( variables['Agent.OS'], 'Windows_NT' )
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/'
+        includeRootFolder: false
+        archiveType: 'tar'
+        tarCompression: 'gz'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(crate_name)-$(Build.SourceBranchName)-$(TARGET).tar.gz'
+    - task: GithubRelease@0
+      condition: ne( variables['Agent.OS'], 'Windows_NT' )
+      inputs:
+        gitHubConnection: 'gnunicorn'
+        repositoryName: 'gnunicorn/substrate-offchain-cb'
+        action: 'edit'
+        target: '$(build.sourceVersion)'
+        tagSource: 'manual'
+        tag: '$(Build.SourceBranchName)'
+        assets: '$(Build.ArtifactStagingDirectory)/$(crate_name)-$(Build.SourceBranchName)-$(TARGET).tar.gz'
+        title: '$(Build.SourceBranchName)'
+        assetUploadMode: 'replace'
+        addChangeLog: true
+    - task: ArchiveFiles@2
+      displayName: Zip assets
+      condition: eq( variables['Agent.OS'], 'Windows_NT' )
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(crate_name)-$(Build.SourceBranchName)-$(TARGET).zip'
+    - task: GithubRelease@0
+      condition: eq( variables['Agent.OS'], 'Windows_NT' )
+      inputs:
+        gitHubConnection: 'gnunicorn'
+        repositoryName: 'gnunicorn/substrate-offchain-cb'
+        action: 'edit'
+        target: '$(build.sourceVersion)'
+        tagSource: 'manual'
+        tag: '$(Build.SourceBranchName)'
+        assets: '$(Build.ArtifactStagingDirectory)/$(crate_name)-$(Build.SourceBranchName)-$(TARGET).zip'
+        title: '$(Build.SourceBranchName)'
+        assetUploadMode: 'replace'
+        addChangeLog: true
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: crate-ci/azure-pipelines
+      endpoint: gnunicorn
+    - repository: gh-install
+      type: github
+      name: crate-ci/gh-install
+      endpoint: gnunicorn
