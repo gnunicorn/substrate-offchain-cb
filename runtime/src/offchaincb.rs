@@ -297,6 +297,16 @@ mod tests {
 		t.into()
 	}
 
+	/// A utility function for our tests. It simulates what the system module does for us (almost
+	/// analogous to `finalize_block`).
+	///
+	/// This function increments the block number and simulates what we have written in
+	/// `decl_module` as `fn offchain_worker(_now: T::BlockNumber)`: run the offchain logic if the
+	/// current node is an authority.
+	///
+	/// Also, since the offchain code might submit some transactions, it queries the transaction
+	/// queue and dispatches any submitted transaction. This is also needed because it is a
+	/// non-runtime logic (transaction queue) which needs to mocked inside a runtime test.
 	fn seal_block(n: u64, state: Arc<RwLock<offchain::testing::State>>) -> Option<usize> {
 		assert_eq!(System::block_number(), n);
 		System::set_block_number(n + 1);
@@ -402,8 +412,8 @@ mod tests {
 
 			// which triggers ack
 			assert_eq!(
-				OffchainCb::oc_requests()[1],
-				offchaincb::OffchainRequest::Ping(1, 49),
+				System::events()[0].event,
+				Event::offchaincb(offchaincb::RawEvent::Ack(1, 49)),
 			);
 		})
 	}
