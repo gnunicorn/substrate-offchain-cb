@@ -418,7 +418,7 @@ mod tests {
 		})
 	}
 
-	// Verify that if ping is from an authority, then an ack is processed in the next block.
+	// Verify that the offchain is executed if the current node is an authority.
 	#[test]
 	fn ping_triggers_ack() {
 		// Assume current node has key 49, hence is an authority.
@@ -445,6 +445,7 @@ mod tests {
 		})
 	}
 
+	// Verify that a non-authority will not execute the offchain logic.
 	#[test]
 	fn only_authorities_can_pong() {
 		// Current node does not have key 49, hence is not the authority.
