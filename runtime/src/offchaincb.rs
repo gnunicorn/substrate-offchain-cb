@@ -113,7 +113,7 @@ decl_module! {
 		/// Called from the offchain worker to respond to a ping
 		pub fn pong(origin, nonce: u8) -> Result {
 			// We don't allow anyone to `pong` but only those authorised in the `authorities`
-			// set at this point. Therefore after ensuring this is singed, we check whether
+			// set at this point. Therefore after ensuring this is signed, we check whether
 			// that given author is allowed to `pong` is. If so, we emit the `Ack` event,
 			// otherwise we've just consumed their fee.
 			let author = ensure_signed(origin)?;
@@ -175,7 +175,7 @@ impl<T: Trait> Module<T> {
 		}
 	}
 
-	/// Respondong to as the given account to a given nonce by calling `pong` as a
+	/// Responding to as the given account to a given nonce by calling `pong` as a
 	/// newly signed and submitted trasnaction
 	fn respond(key: &T::AccountId, nonce: u8) {
 		runtime_io::print_utf8(b"Received ping, sending pong");
@@ -460,4 +460,3 @@ mod tests {
 		})
 	}
 }
-
