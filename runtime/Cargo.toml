@@ -28,6 +28,10 @@ sr-primitives = { git = "https://github.com/paritytech/substrate/", rev = "bbe90
 client = { package = "substrate-client", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8", default_features = false }
 offchain-primitives = { package = "substrate-offchain-primitives", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8", default-features = false }
 
+[dev-dependencies]
+offchain = { package = "substrate-offchain", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
+parking_lot = "0.9.0"
+
 [build-dependencies]
 wasm-builder-runner = { package = "substrate-wasm-builder-runner", git = "https://github.com/paritytech/substrate/", rev = "bbe90e31ed2fd71dc037fc385dae32584d2b1ce8" }
 
